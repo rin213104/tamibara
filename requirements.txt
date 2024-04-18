@@ -1,0 +1,2 @@
+Timer
+pubspec.yaml 파일에 dependencies 섹션에 intl 패키지를 추가, 터미널: flutter pub get(패키지 다운로드)
