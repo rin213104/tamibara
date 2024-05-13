@@ -78,19 +78,15 @@ class NickNameBox extends StatefulWidget {
 }
 
 // 닉네임 박스 상태
-class _NickNameBoxState extends State<NickNameBox> { // 상태 관리용 State 클래스 이름 변경
+class _NickNameBoxState extends State<NickNameBox> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool _showPlaceHolder = true;
-  bool _isNameAvailable = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() {
-        _showPlaceHolder = !_focusNode.hasFocus;
-      });
+      setState(() {});
     });
   }
 
@@ -103,31 +99,62 @@ class _NickNameBoxState extends State<NickNameBox> { // 상태 관리용 State �
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          decoration: BoxDecoration(
-          color: Color(0xFFF7FFFD),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: TextFormField(
-          controller: _textController,
-          focusNode: _focusNode,
-          textAlign: TextAlign.left,
-          decoration: InputDecoration(
-          contentPadding: EdgeInsetsDirectional.fromSTEB(10, 10, 0, 0),
-          hintText: _showPlaceHolder ? '닉네임을 입력하세요' : null,
-          border: InputBorder.none,
-          hintStyle: TextStyle(
-            color: Color(0xFFA1A1A1),
-            fontSize: 15,
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFF7FFFD),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: TextFormField(
+              controller: _textController,
+              focusNode: _focusNode,
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                hintText: _focusNode.hasFocus ? null : '닉네임을 입력하세요',
+                border: InputBorder.none,
+                hintStyle: TextStyle(
+                  color: Color(0xFFA1A1A1),
+                  fontSize: 15,
+                ),
+              ),
             ),
           ),
         ),
+        if (_textController.text.isNotEmpty)
+          IconButton(
+            icon: Icon(Icons.arrow_forward),
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => CharacterSelect(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 }
 
-/* // 닉네임 중복 메시지 출력 > 수정 필요, 닉네임 박스 하단에 위치시키고 싶은데 박스 안에 출력됨
+
+ // 닉네임 중복 메시지 출력 > 수정 필요, 닉네임 박스 하단에 위치시키고 싶은데 박스 안에 출력됨
 class NickNameValidationMessage extends StatelessWidget {
   final bool isNameAvailable;
   final TextEditingController? textController;
@@ -151,7 +178,7 @@ class NickNameValidationMessage extends StatelessWidget {
     else
       return SizedBox.shrink();
   }
-} */
+}
 
 bool isDuplicateNickName(String inputNickName) {
   // 로직 작성해야 함 > 데이터베이스에서 확인

@@ -8,6 +8,10 @@ void main() {
 }
 
 class WelcomeScreen extends StatelessWidget {
+  final String? selectedImage;
+
+  WelcomeScreen({Key? key, this.selectedImage}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,11 +52,13 @@ class WelcomeScreen extends StatelessWidget {
                       SizedBox(height: 100),
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                        child: Image.asset(
-                          'assets/images/카피바라 성년.png',
+                        child: selectedImage != null
+                            ? Image.asset(
+                          selectedImage!,
                           width: 250,
                           height: 250,
-                        ),
+                        )
+                            : SizedBox(), // 선택된 이미지가 없으면 빈 SizedBox 반환
                       )
                     ],
                   )
@@ -61,7 +67,7 @@ class WelcomeScreen extends StatelessWidget {
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }
