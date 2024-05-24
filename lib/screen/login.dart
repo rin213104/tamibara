@@ -4,39 +4,51 @@ import '../screen/startSet_1.dart';
 import '../const/colors.dart';
 
 void main() {
-  runApp(loginScreen());
+  runApp(MyApp());
 }
 
-class loginScreen extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Color(0xFFBFEBE1),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 70),
-              Image.asset(
-                'assets/images/카피바라 성년.png',
-                width: 200,
-                height: 200,
+      home: LoginScreen(),
+    );
+  }
+}
+
+class LoginScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var screenWidth = screenSize.width;
+    var screenHeight = screenSize.height;
+
+    return Scaffold(
+      backgroundColor: Color(0xFFBFEBE1),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: screenHeight * 0.1),
+            Image.asset(
+              'assets/images/카피바라 성년.png',
+              width: screenWidth * 0.5,
+              height: screenWidth * 0.5,
+            ),
+            SizedBox(height: screenHeight * 0.15),
+            Text(
+              '--- Sign in with ---',
+              style: TextStyle(
+                color: TEXT_COLOR,
+                fontSize: screenWidth * 0.045,
+                fontWeight: FontWeight.w700,
               ),
-              SizedBox(height: 100),
-              Text(
-                '--- Sign in with ---',
-                style: TextStyle(
-                  color: TEXT_COLOR,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 10),
-              SizedBox(
-                width: 250,
-                height: 40,
+            ),
+            SizedBox(height: screenHeight * 0.015),
+            SizedBox(
+              width: screenWidth * 0.65,
+              height: screenHeight * 0.06,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -46,67 +58,75 @@ class loginScreen extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 0, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image.asset(
-                        'assets/images/pngegg.png',
-                        width: 20,
-                        height: 20,
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Kakao',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFF3C1E1E),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ),
-              ),
-          ),
-              SizedBox(height: 10),
-              SizedBox(
-                width: 250,
-                height: 40,
-              child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFDFDFDF), // D8D7DB 색상으로 출력됨
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 30, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(screenWidth * 0.02, 0, screenWidth * 0.05, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Image.asset(
-                          'assets/images/person.png',
-                          width: 30,
-                          height: 30,
+                          'assets/images/pngegg.png',
+                          width: screenWidth * 0.05,
+                          height: screenWidth * 0.05,
                         ),
                         Expanded(
+                          child: Text(
+                            'Kakao',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF3C1E1E),
+                              fontSize: screenWidth * 0.04,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.015),
+            SizedBox(
+              width: screenWidth * 0.65,
+              height: screenHeight * 0.06,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Set1(), // StartSet1 화면으로 변경
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFDFDFDF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, screenWidth * 0.08, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Image.asset(
+                        'assets/images/person.png',
+                        width: screenWidth * 0.08,
+                        height: screenWidth * 0.08,
+                      ),
+                      Expanded(
                         child: Text(
                           'Guest',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
-                            ),
+                            fontSize: screenWidth * 0.04,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
