@@ -20,12 +20,13 @@ class MyApp extends StatelessWidget {
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // 화면 크기 값 받아와서 저장
     var screenSize = MediaQuery.of(context).size;
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
 
     return Scaffold(
-      backgroundColor: Color(0xFFBFEBE1),
+      backgroundColor: PRIMARY_COLOR,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Set1(), // StartSet1 화면으로 변경
+                      builder: (context) => Set1(), // startSet_1 화면으로 전환
                     ),
                   );
                 },
