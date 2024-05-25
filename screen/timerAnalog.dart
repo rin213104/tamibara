@@ -7,6 +7,8 @@ import 'package:timer/shared/menu_bottom.dart';
 import 'package:timer/widget/button_widget.dart';
 import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
+import '../action/selectedImageModel.dart';
+import '../const/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => TimerModel(),
       child: MaterialApp(
-        home: TimerAnalogPage(),
+        home: TimerAnalogPage(), // 기본 이미지 경로 설정
       ),
     );
   }
@@ -31,6 +33,7 @@ class TimerAnalogPage extends StatefulWidget {
 }
 
 class _TimerAnalogPageState extends State<TimerAnalogPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +74,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
             .size
             .height / 8,
         alignment: Alignment.center,
-        color: Color(0xFFD3F3EF),
+        color: PRIMARY_COLOR,
         child: buildDateText(),
       );
 
@@ -82,13 +85,14 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
     return Text(
       formattedDate,
       style: TextStyle(
-        color: Color(0xFF4D6058),
+        color: TIMER_COLOR,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
+  // 타이머 버튼
   Widget buildButton() {
     return Consumer<TimerModel>(
       builder: (context, timer, child) {
@@ -133,7 +137,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           progressValue = timer.seconds / timer.maxSeconds;
         }
         return SizedBox(
-          width: 200, // 전체 크기 설정
+          width: 200,
           height: 200,
           child: Stack(
             alignment: Alignment.center,
@@ -141,11 +145,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
               SizedBox(
                 width: 350,
                 height: 350,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator(  // 타이머 원형 진행 바
                   value: progressValue, // 수정된 값 사용
                   valueColor: AlwaysStoppedAnimation(Colors.white),
-                  backgroundColor: Color(0xFF5B9A90),
-                  strokeWidth: 20, // 원형 진행 바의 두께를 조정
+                  backgroundColor: PROGRESSBAR_COLOR,
+                  strokeWidth: 20,
                 ),
               ),
               Positioned(
@@ -156,14 +160,14 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
                     Text(
                       '${timer.seconds ~/ 60}:${(timer.seconds % 60).toString().padLeft(2, '0')}',
                       style: TextStyle(
-                        color: Color(0xFF4D6058),
+                        color: TIMER_COLOR,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 5),
                     Image.asset(
-                      'lib/images/image.png',
+                      Provider.of<SelectedImageModel>(context).selectedImage ?? 'lib/images/capybara/카피바라 성년.png',
                       width: 80,
                       height: 80,
                     ),
@@ -176,6 +180,8 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
       },
     );
   }
+
+  // 페이지 1/2 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

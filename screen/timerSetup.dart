@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../action/timerModel.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/action/timerSlide.dart';
+import '../const/colors.dart';
+
 
 class TimerSetup extends StatelessWidget {
   @override
@@ -11,14 +14,14 @@ class TimerSetup extends StatelessWidget {
         title: Text(
           '타이머 설정',
           style: TextStyle(
-            color: Color(0xFF4D6058), // 제목 텍스트 색상 설정
+            color: TEXT_COLOR, // 제목 텍스트 색상 설정
             fontWeight: FontWeight.bold, // 텍스트의 굵기 설정
           ),
         ),
-        backgroundColor: Color(0xFFD3F3EF), // 제목 배경색 설정
+        backgroundColor: PRIMARY_COLOR, // 제목 배경색 설정
         elevation: 0,
       ),
-      backgroundColor: Color(0xFFD3F3EF),
+      backgroundColor: PRIMARY_COLOR,
       body: Column(
         children: [
           SizedBox(height: 40),
@@ -28,7 +31,12 @@ class TimerSetup extends StatelessWidget {
             onPressed: () {
               // 설정된 시간을 TimerModel에 전달하고 슬라이드 화면으로 이동
               Provider.of<TimerModel>(context, listen: false).setMaxSeconds(SetTimeState.totalSeconds);
-              Navigator.of(context).pushNamed('/slide');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+                ),
+              );
             },
             child: Text(
               '설정 완료',
@@ -41,10 +49,10 @@ class TimerSetup extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 버튼 패딩 조정
               minimumSize: Size(150, 50), // 버튼 최소 크기 설정
-              backgroundColor: Color(0xFF5B9A90),
+              backgroundColor: BUTTON_COLOR,
             ),
           ),
-          SizedBox(height: 50),
+          SizedBox(height: 100),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -354,7 +362,12 @@ class CircularTimerButton extends StatelessWidget {
       onTap: () {
         final totalSeconds = time * 60;
         Provider.of<TimerModel>(context, listen: false).setMaxSeconds(totalSeconds);
-        Navigator.of(context).pushNamed('/slide');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+          ),
+        );
       },
       child: Container(
         width: 80, // 버튼의 너비를 증가

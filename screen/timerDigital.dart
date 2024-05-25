@@ -7,6 +7,9 @@ import 'package:timer/shared/menu_bottom.dart';
 import 'package:timer/widget/button_widget.dart';
 import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
+import '../action/selectedImageModel.dart';
+import '../const/colors.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +66,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
     height: MediaQuery.of(context).size.height / 8,
     alignment: Alignment.center,
-    color: Color(0xFFD3F3EF),
+    color: PRIMARY_COLOR,
     child: buildDateText(),
   );
 
@@ -74,13 +77,14 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     return Text(
       formattedDate,
       style: TextStyle(
-        color: Color(0xFF4D6058),
+        color: TIMER_COLOR,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
+  // 타이머 버튼
   Widget buildButton() {
     return Consumer<TimerModel>(
       builder: (context, timer, child) {
@@ -129,24 +133,24 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             Text(
               '${timer.elapsedSeconds ~/ 60}:${(timer.elapsedSeconds % 60).toString().padLeft(2, '0')}',
               style: TextStyle(
-                color: Color(0xFF4D6058),
+                color: TIMER_COLOR,
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 20),
-            Image.asset(
-              'lib/images/image.png',
+            Image.asset(  // 캐릭터 이미지
+              Provider.of<SelectedImageModel>(context).selectedImage ?? 'lib/images/capybara/카피바라 성년.png',
               width: 80,
               height: 80,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             SizedBox(
               width: 250,
               height: 15,
-              child: LinearProgressIndicator(
+              child: LinearProgressIndicator(  // 타이머 선형 진행바
                 value: progressValue, // 수정된 값 사용
-                valueColor: AlwaysStoppedAnimation(Color(0xFF5B9A90)), // 초록색으로 변경
+                valueColor: AlwaysStoppedAnimation(PROGRESSBAR_COLOR), // 초록색으로 변경
                 backgroundColor: Colors.white, // 배경색을 흰색으로 설정
               ),
             ),
@@ -156,6 +160,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
+  // 페이지 2/2 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
