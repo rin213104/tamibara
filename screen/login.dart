@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
           children: [
             SizedBox(height: screenHeight * 0.1),
             Image.asset(
-              'lib/images/카피바라 성년.png',
+              'lib/images/capybara/카피바라성년.png',
               width: screenWidth * 0.5,
               height: screenWidth * 0.5,
             ),

@@ -19,9 +19,9 @@ class _CharacterSelectState extends State<CharacterSelect> {
   String? selectedImage; // 선택된 이미지
 
   final List<String> imagePaths = [ // 이미지 경로 저장
-    'lib/images/카피바라 성년.png',
-    'lib/images/곰돌기본채색.png',
-    'lib/images/냥돌기본채색.png',
+    'lib/images/capybara/카피바라성년.png',
+    'lib/images/bear/곰돌기본채색.png',
+    'lib/images/cat/냥돌기본채색.png',
   ];
 
   @override

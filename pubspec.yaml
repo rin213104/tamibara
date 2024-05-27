@@ -62,20 +62,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - lib/images/chap01.png
-    - lib/images/chap02.png
-    - lib/images/chap03.png
-    - lib/images/person.png
-    - lib/images/pngegg.png
-    - lib/images/곰돌기본채색.png
-    - lib/images/냥돌기본채색.png
-    - lib/images/카피바라 성년.png
-    - lib/images/bear/곰돌.png
-    - lib/images/bear/곰돌_신남.png
-    - lib/images/capybara/카피바라 기쁨.png
-    - lib/images/capybara/카피바라 성년.png
-    - lib/images/cat/냥돌.png
-    - lib/images/cat/냥돌_신남.png
+    - lib/images/
+    - lib/images/bear/
+    - lib/images/cat/
+    - lib/images/capybara/
+
 
 
   # To add assets to your application, add an assets section, like this:

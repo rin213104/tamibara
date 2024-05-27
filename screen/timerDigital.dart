@@ -10,7 +10,6 @@ import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -19,9 +18,13 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TimerModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TimerModel()),
+        ChangeNotifierProvider(create: (_) => SelectedImageModel()),
+      ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: TimerDigitalPage(),
       ),
     );
@@ -34,6 +37,18 @@ class TimerDigitalPage extends StatefulWidget {
 }
 
 class _TimerDigitalPageState extends State<TimerDigitalPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
+      final timerModel = Provider.of<TimerModel>(context, listen: false);
+      if (selectedImageModel.selectedImage != null) {
+        timerModel.setOriginalImage(selectedImageModel.selectedImage!); // 선택된 이미지를 TimerModel에 설정
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +101,8 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
 
   // 타이머 버튼
   Widget buildButton() {
-    return Consumer<TimerModel>(
-      builder: (context, timer, child) {
+    return Consumer2<TimerModel, SelectedImageModel>(
+      builder: (context, timer, selectedImageModel, child) {
         final isRunning = timer.isRunning;
         final isCompleted = timer.seconds == timer.maxSeconds || timer.seconds == 0;
 
@@ -101,6 +116,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
                 if (isRunning) {
                   timer.stopTimer(reset: false);
                 } else {
+                  // 타이머를 다시 시작할 때 원래 이미지로 복원
+                  if (timer.originalImage != null) {
+                    timer.resetImage(); // modifiedImage를 originalImage로 복원
+                    selectedImageModel.setSelectedImage(timer.originalImage!);
+                  }
                   timer.startTimer(reset: false);
                 }
               },
@@ -108,25 +128,44 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             const SizedBox(width: 12),
             ButtonWidget(
               text: 'Reset',
-              onClicked: () => timer.resetTimer(),
+              onClicked: () {
+                timer.resetImage(); // modifiedImage를 originalImage로 복원
+                if (timer.originalImage != null) {
+                  selectedImageModel.setSelectedImage(timer.originalImage!);
+                }
+                timer.resetTimer();
+              },
             ),
           ],
         )
             : ButtonWidget(
           text: 'Start Timer!',
-          onClicked: () => timer.startTimer(),
+          onClicked: () {
+            if (timer.originalImage != null) {
+              selectedImageModel.setSelectedImage(timer.originalImage!); // 원래 이미지로 복원
+            }
+            timer.startTimer();
+          },
         );
       },
     );
   }
 
   Widget buildTimer() {
-    return Consumer<TimerModel>(
-      builder: (context, timer, child) {
+    return Consumer2<TimerModel, SelectedImageModel>(
+      builder: (context, timer, selectedImageModel, child) {
         double progressValue = 0; // 기본 값을 0으로 설정
         if (timer.maxSeconds > 0) { // maxSeconds가 0이 아닐 때만 계산
           progressValue = timer.elapsedSeconds / timer.maxSeconds;
         }
+
+        // 타이머가 종료되면 onTimerEnd 함수 호출
+        if (timer.seconds == 0 && timer.isRunning) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            onTimerEnd(context);
+          });
+        }
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -139,8 +178,8 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
               ),
             ),
             SizedBox(height: 20),
-            Image.asset(  // 캐릭터 이미지
-              Provider.of<SelectedImageModel>(context).selectedImage ?? 'lib/images/capybara/카피바라 성년.png',
+            Image.asset(
+              timer.getCurrentImage() ?? 'lib/images/capybara/카피바라성년.png', // 캐릭터 이미지
               width: 80,
               height: 80,
             ),
@@ -148,16 +187,29 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             SizedBox(
               width: 250,
               height: 15,
-              child: LinearProgressIndicator(  // 타이머 선형 진행바
-                value: progressValue, // 수정된 값 사용
-                valueColor: AlwaysStoppedAnimation(PROGRESSBAR_COLOR), // 초록색으로 변경
-                backgroundColor: Colors.white, // 배경색을 흰색으로 설정
+              child: LinearProgressIndicator(
+                value: progressValue,
+                valueColor: AlwaysStoppedAnimation(PROGRESSBAR_COLOR),
+                backgroundColor: Colors.white,
               ),
             ),
           ],
         );
       },
     );
+  }
+
+  // 타이머 종료 시 이미지 변경 함수
+  void changeImageOnTimerEnd(BuildContext context) {
+    final timerModel = Provider.of<TimerModel>(context, listen: false);
+    final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
+    timerModel.changeImageOnTimerEnd();
+    selectedImageModel.setSelectedImage(timerModel.getCurrentImage()!);
+  }
+
+  // 타이머 종료 시 이미지 변경 함수 호출
+  void onTimerEnd(BuildContext context) {
+    changeImageOnTimerEnd(context);
   }
 
   // 페이지 2/2 표시
