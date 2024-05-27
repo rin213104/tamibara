@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:timer/screen/timerSetup.dart';
+import 'package:timer/screen/goal.dart';
+import 'package:timer/screen/startSet_1.dart'; // startSet_1 화면 import 추가
 
-class MenuBottom extends StatelessWidget{
+class MenuBottom extends StatelessWidget {
   const MenuBottom({
     Key? key,
   }) : super(key: key);
 
   // 타이머, 목표설정, 캐릭터, 설정 누르면 해당 화면으로 이동
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return BottomNavigationBar(
-      onTap: (int index){
-        switch(index){
+      onTap: (int index) {
+        switch (index) {
           case 0:
-            Navigator.pushNamed(context, '/');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TimerSetup(),
+              ),
+            );
             break;
           case 1:
-            Navigator.pushNamed(context, '/');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GoalPage(),
+              ),
+            );
             break;
           default:
         }
       },
-
-      type: BottomNavigationBarType.fixed,  // 요소 4개 이상일 경우
+      type: BottomNavigationBarType.fixed, // 요소 4개 이상일 경우
       selectedItemColor: Color(0xFF304C49), // 선택된 아이템의 아이콘 및 레이블 색상 변경
       unselectedItemColor: Color(0xFF304C49), // 선택되지 않은 아이템의 아이콘 및 레이블 색상 변경
       selectedLabelStyle: TextStyle(color: Color(0xFF304C49)), // 선택된 아이템의 레이블 색상 변경
