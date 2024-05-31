@@ -6,6 +6,7 @@ import '../screen/edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../model/todo_data_model.dart';
+import '../screen/statistics.dart';
 
 class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   final List<ToDoCard> ToDoList = [];
@@ -17,6 +18,9 @@ class ToDoScreen extends StatefulWidget { //투두 리스트 화면
 }
 
 class _setToDoScreenState extends State<ToDoScreen> {
+
+  List<int> completedDurations = [];  // 완료된 항목들의 소요 시간을 저장하는 리스트
+
   void _handleToDoChecked(bool isChecked, int index) {  //
     if (isChecked) {
       setState(() {
@@ -103,26 +107,40 @@ class _setToDoScreenState extends State<ToDoScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFFBBD9D6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90)),
-        onPressed: () async {
-          ToDoData.setSelectedDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
-          ToDoData.setSelectedDuration(0);
-          final results = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddToDo()),
-          );
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            backgroundColor: Color(0xFFBBD9D6),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90)),
+            onPressed: () {
+              Statistics.showStatistics(context, completedDurations);
+            },
+            child: Icon(Icons.bar_chart, color: TEXT_COLOR),
+          ),
+          SizedBox(width: 16),
+          FloatingActionButton(
+            backgroundColor: Color(0xFFBBD9D6),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90)),
+            onPressed: () async {
+              ToDoData.setSelectedDate(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+              ToDoData.setSelectedDuration(0);
+              final results = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddToDo()),
+              );
 
-          if (results != null) {
-            final List<ToDoCard> newToDoList = results;
-            setState(() {
-              widget.ToDoList.addAll(newToDoList);
-              widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
-            });
-          }
-        },
-        child: Icon(Icons.add, color: TEXT_COLOR),
+              if (results != null) {
+                final List<ToDoCard> newToDoList = results;
+                setState(() {
+                  widget.ToDoList.addAll(newToDoList);
+                  widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
+                });
+              }
+            },
+            child: Icon(Icons.add, color: TEXT_COLOR),
+          ),
+        ],
       ),
       bottomNavigationBar: MenuBottom(),
     );
