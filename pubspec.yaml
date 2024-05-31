@@ -34,8 +34,6 @@ dependencies:
   flutter_spinkit: ^5.2.1
   provider: ^6.0.3
   flutter_local_notifications: ^17.1.2
-  firebase_core: ^2.31.1
-  firebase_messaging: ^14.9.3
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,7 +62,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - lib/images/
+    - assets/images/bear/
+    - assets/images/cat/
+    - assets/images/capybara/
+    - assets/images/
 
   # To add images to your application, add an images section, like this:
   # images:

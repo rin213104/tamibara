@@ -119,10 +119,10 @@ class optionScreen extends StatelessWidget {
                 _buildSectionTitle('알림'),
                 _divider2,
                 _buildListTile('알림 설정', onTap: () {
-                  Navigator.push(
+                  /*Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => pushNotificationService()),
-                  );// 알림 설정을 터치했을 때 수행할 동작
+                  );*/// 알림 설정을 터치했을 때 수행할 동작
                 }),
                 _buildSectionTitle('테마'),
                 _divider2,
