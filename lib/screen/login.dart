@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
     var screenHeight = screenSize.height;
 
     return Scaffold(
-      backgroundColor: PRIMARY_COLOR,
+      backgroundColor: Color(0xFFBFEBE1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Set1(), // startSet_1 화면으로 전환
+                      builder: (context) => Set1(), // StartSet1 화면으로 변경
                     ),
                   );
                 },
@@ -107,7 +107,7 @@ class LoginScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset(
+                      Image.asset( // 플러터 아이콘으로 변경 (Icons.person)
                         'assets/images/person.png',
                         width: screenWidth * 0.08,
                         height: screenWidth * 0.08,
