@@ -25,9 +25,9 @@ class CharacterSelectPage extends StatefulWidget {
 
 class _CharacterSelectPageState extends State<CharacterSelectPage> {
   final List<String> imagePaths = [ // 이미지 경로 저장
-    'assets/images/카피바라 성년.png',
-    'assets/images/곰돌기본채색.png',
-    'assets/images/냥돌기본채색.png',
+    'assets/images/capybara/카피바라성년.png',
+    'assets/images/bear/곰돌기본채색.png',
+    'assets/images/cat/냥돌기본채색.png',
   ];
 
   final List<String> descriptions = [ // 각 캐릭터에 대한 설명

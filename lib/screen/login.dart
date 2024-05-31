@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../screen/startSet_1.dart';
 import '../const/colors.dart';
+import 'startSet_1.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,14 +26,14 @@ class LoginScreen extends StatelessWidget {
     var screenHeight = screenSize.height;
 
     return Scaffold(
-      backgroundColor: Color(0xFFBFEBE1),
+      backgroundColor: PRIMARY_COLOR,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: screenHeight * 0.1),
             Image.asset(
-              'assets/images/카피바라 성년.png',
+              'assets/images/capybara/카피바라성년.png',
               width: screenWidth * 0.5,
               height: screenWidth * 0.5,
             ),
@@ -92,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Set1(), // StartSet1 화면으로 변경
+                      builder: (context) => Set1(), // startSet_1 화면으로 전환
                     ),
                   );
                 },
@@ -107,7 +107,7 @@ class LoginScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset( // 플러터 아이콘으로 변경 (Icons.person)
+                      Image.asset(
                         'assets/images/person.png',
                         width: screenWidth * 0.08,
                         height: screenWidth * 0.08,

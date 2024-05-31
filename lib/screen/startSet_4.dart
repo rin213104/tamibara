@@ -3,7 +3,6 @@ import '../const/colors.dart';
 import '../screen/welcome.dart';
 
 class CharacterDetail extends StatelessWidget {
-  // 경로를 가져옴
   final String imagePath;
   final String description;
 
@@ -55,7 +54,7 @@ class CharacterDetail extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.05),
                 decoration: BoxDecoration(
-                  color: Color(0xFFB5E6D1),
+                  color: Color(0xFFB5E6D1).withOpacity(0.3),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Text(
