@@ -6,7 +6,7 @@ import '../screen/edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../model/todo_data_model.dart';
-import '../screen/statistics.dart';
+import '../screen/statisticsScreen.dart';
 
 class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   final List<ToDoCard> ToDoList = [];
@@ -14,21 +14,25 @@ class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   ToDoScreen({Key? key}) : super(key: key);
 
   @override
-  State<ToDoScreen> createState() => _setToDoScreenState();
+  State<ToDoScreen> createState() => _ToDoScreenState();
 }
 
-class _setToDoScreenState extends State<ToDoScreen> {
+class _ToDoScreenState extends State<ToDoScreen> {
+  List<Map<String, dynamic>> completedItems = [];  // 완료된 항목들의 데이터를 저장하는 리스트
 
-  List<int> completedDurations = [];  // 완료된 항목들의 소요 시간을 저장하는 리스트
-
-  void _handleToDoChecked(bool isChecked, int index) {  //
+  void _handleToDoChecked(bool isChecked, int index) {
     if (isChecked) {
       setState(() {
+        completedItems.add({
+          'date': DateTime.now(),
+          'duration': widget.ToDoList[index].DurationTime,
+        });
         widget.ToDoList.removeAt(index);
       });
     }
   }
-  void _ToDoDelete(index) {
+
+  void _ToDoDelete(int index) {
     setState(() {
       widget.ToDoList.removeAt(index);
     });
@@ -39,7 +43,9 @@ class _setToDoScreenState extends State<ToDoScreen> {
     Provider.of<ToDoDataModel>(context, listen: false).setSelectedDuration(widget.ToDoList[index].DurationTime);
     final editResults = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EditToDo(todo: widget.ToDoList[index])),
+      MaterialPageRoute(builder: (context) => EditToDo(
+        todo: widget.ToDoList[index],
+      )),
     );
 
     if (editResults != null) {
@@ -114,7 +120,12 @@ class _setToDoScreenState extends State<ToDoScreen> {
             backgroundColor: Color(0xFFBBD9D6),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90)),
             onPressed: () {
-              Statistics.showStatistics(context, completedDurations);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StatisticsScreen(completedItems: completedItems),
+                ),
+              );
             },
             child: Icon(Icons.bar_chart, color: TEXT_COLOR),
           ),
@@ -146,7 +157,6 @@ class _setToDoScreenState extends State<ToDoScreen> {
     );
   }
 }
-
 
 AppBar ToDoAppbar() {
   return AppBar(
