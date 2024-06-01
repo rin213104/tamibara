@@ -6,6 +6,8 @@ import '../screen/edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../model/todo_data_model.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // 토스트 알림을 위해 추가
+import 'dart:math'; // 랜덤 메시지를 위해 추가
 
 class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   final List<ToDoCard> ToDoList = [];
@@ -17,13 +19,26 @@ class ToDoScreen extends StatefulWidget { //투두 리스트 화면
 }
 
 class _setToDoScreenState extends State<ToDoScreen> {
-  void _handleToDoChecked(bool isChecked, int index) {  //
+  final List<String> _congratulatoryMessages = [ // 축하 메시지 리스트 추가
+    "목표를 달성하셨네요!\n정말 대단해요!",
+    "잘했어요!\n꾸준한 모습이 좋아요!",
+    "목표 달성!\n보람이 느껴지나요?",
+    "대단해요!\n앞으로도 계속 이렇게 해봐요!",
+    "목표 달성 완료!\n꾸준히 한다면 더 큰 목표도 이룰 수 있을 거예요!",
+    "정말 잘했어요!\n열심히 하셨네요!",
+    "수고했어요!\n앞으로도 열심히 해봐요!"
+  ];
+
+  void _handleToDoChecked(bool isChecked, int index) {
     if (isChecked) {
       setState(() {
         widget.ToDoList.removeAt(index);
       });
+      // 체크박스 상태 변경 시 랜덤 메시지 출력
+      _showRandomToast();
     }
   }
+
   void _ToDoDelete(index) {
     setState(() {
       widget.ToDoList.removeAt(index);
@@ -127,8 +142,27 @@ class _setToDoScreenState extends State<ToDoScreen> {
       bottomNavigationBar: MenuBottom(),
     );
   }
-}
 
+  // 랜덤 메시지를 표시하는 함수 추가
+  void _showRandomToast() {
+    final random = Random();
+    final message = _congratulatoryMessages[random.nextInt(_congratulatoryMessages.length)];
+    _showToast(message);
+  }
+
+  // 토스트 알림을 위한 함수 추가
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 20.0,
+    );
+  }
+}
 
 AppBar ToDoAppbar() {
   return AppBar(
