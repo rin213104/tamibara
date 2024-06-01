@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../action/timerModel.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/action/timerSlide.dart';
+import '../action/timerSlide.dart';
 import '../const/colors.dart';
 
 class TimerSetup extends StatelessWidget {

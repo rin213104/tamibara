@@ -6,7 +6,6 @@ import '../screen/edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../model/todo_data_model.dart';
-import '../screen/statisticsScreen.dart';
 
 class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   final List<ToDoCard> ToDoList = [];
