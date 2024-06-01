@@ -50,7 +50,7 @@ class CharacterDetail extends StatelessWidget {
                 height: screenHeight * 0.4,
                 fit: BoxFit.contain,
               ),
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: screenHeight * 0.02),
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.05),
                 decoration: BoxDecoration(
@@ -115,6 +115,7 @@ class CharacterDetail extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: screenHeight * 0.03),
             ],
           ),
         ),

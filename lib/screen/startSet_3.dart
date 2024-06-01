@@ -51,7 +51,7 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, screenHeight * 0.1, 0, 0),
+                padding: EdgeInsets.only(top: screenHeight * 0.1),
                 child: Text(
                   "목표를 함께할",
                   style: TextStyle(
@@ -62,7 +62,7 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, screenHeight * 0.03),
+                padding: EdgeInsets.only(bottom: screenHeight * 0.03),
                 child: Text(
                   "캐릭터를 선택해 주세요!",
                   style: TextStyle(
@@ -72,7 +72,6 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
                   ),
                 ),
               ),
-
               SizedBox(height: screenHeight * 0.03),
               buildClickableImageWidget(context, imagePaths[0], descriptions[0], screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.03),
@@ -96,18 +95,13 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
           ),
         );
       },
-      child: Stack(
-        children: [
-          Opacity(
-            opacity: 1.0, // 선택되면 투명도 절반 감소 (여기서는 선택 효과 제거)
-            child: Image.asset(
-              imagePath,
-              width: screenWidth * 0.4,
-              height: screenHeight * 0.17,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
+      child: Center( // 이미지 중앙 정렬
+        child: Image.asset(
+          imagePath,
+          width: screenWidth * 0.4,
+          height: screenHeight * 0.17,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }
