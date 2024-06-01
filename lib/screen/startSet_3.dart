@@ -31,9 +31,9 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
   ];
 
   final List<String> descriptions = [ // 각 캐릭터에 대한 설명
-    "이름: 카돌\n나이: 1000\n\n천년을 살았다는 전설의 동물. 무슨 생각을 하고 있는지 알기 어렵다. 과묵하지만 기분 변화가 표정에 잘 드러나는 편. 묵묵히 당신의 옆을 지키고 있을 것이다.",
-    "이름: 곰돌\n나이: ???\n\n몇 년을 살았는지 알 수 없는 곰이다. 곰의 형태를 하고 있지만 사실 살찐 햄스터일지도 모른다는 설이 돌고 있다. 하지만 누구보다 다정하게 당신을 응원해 줄 것이다.",
-    "이름: 냥돌\n나이: 2\n\n아직 어린 고등어 고양이. 힘든 길거리 생활 끝에 강인한 성격을 지니게 되었다. 쉽게 좌절하지 않는 편. 당신의 스파르타 동무가 되어 줄 것이다.",
+    "이름: 카돌\n특징: 선비 카피바라\n\n천년을 살았다는 전설의 동물. 무슨 생각을 하고 있는지 알기 어렵다. 과묵하지만 기분 변화가 표정에 잘 드러나는 편. 묵묵히 당신의 옆을 지키고 있을 것이다.",
+    "이름: 곰돌\n특징: 다정한 곰\n\n몇 년을 살았는지 알 수 없는 곰이다. 곰의 형태를 하고 있지만 사실 살찐 햄스터일지도 모른다는 설이 돌고 있다. 하지만 누구보다 다정하게 당신을 응원해 줄 것이다.",
+    "이름: 냥돌\n나이: 양아치 냥\n\n아직 어린 고등어 고양이. 힘든 길거리 생활 끝에 강인한 성격을 지니게 되었다. 쉽게 좌절하지 않는 편. 당신의 스파르타 동무가 되어 줄 것이다.",
   ];
 
   @override
@@ -72,12 +72,7 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
                   ),
                 ),
               ),
-              Image.asset(
-                'assets/images/chap03.png',
-                width: screenWidth * 0.8,
-                height: screenHeight * 0.1,
-                fit: BoxFit.contain,
-              ),
+
               SizedBox(height: screenHeight * 0.03),
               buildClickableImageWidget(context, imagePaths[0], descriptions[0], screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.03),

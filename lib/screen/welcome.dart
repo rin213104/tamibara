@@ -49,17 +49,8 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.1),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                      child: Image.asset(
-                        selectedImage,
-                        width: screenWidth * 0.6,
-                        height: screenWidth * 0.6,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.06),
-                    ElevatedButton(
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -67,18 +58,27 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text(
-                        '시작하기',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      child: Image.asset(
+                        selectedImage,
+                        width: screenWidth * 0.6,
+                        height: screenWidth * 0.6,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 버튼 패딩 조정
-                        minimumSize: Size(150, 50), // 버튼 최소 크기 설정
-                        backgroundColor: Color(0xFF5B9A90),
+                    ),
+                    SizedBox(height: screenHeight * 0.06),
+                    Text(
+                      '^',
+                      style: TextStyle(
+                        color: TEXT_COLOR,
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      '눌러서 시작',
+                      style: TextStyle(
+                        color: Color(0xFF4D6058),
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],

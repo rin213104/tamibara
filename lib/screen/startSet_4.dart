@@ -79,6 +79,7 @@ class CharacterDetail extends StatelessWidget {
                       style: TextStyle(
                         color: Color(0xFF5E5F60),
                         fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
@@ -108,6 +109,7 @@ class CharacterDetail extends StatelessWidget {
                       style: TextStyle(
                         color: Color(0xFF3A6CCC),
                         fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
