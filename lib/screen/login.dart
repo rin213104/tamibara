@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: screenHeight * 0.015),
+            SizedBox(height: screenHeight * 0.03),
             AnimatedOpacity(
               opacity: _opacity,
               duration: Duration(seconds: 1),
