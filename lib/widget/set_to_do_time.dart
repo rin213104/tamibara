@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
 import '../const/colors.dart';
 
 class SetTime extends StatefulWidget {

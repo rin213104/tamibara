@@ -6,9 +6,10 @@ import '../screen/timerSetup.dart';
 import '../screen/login.dart';
 import '../action/selectedImageModel.dart';
 import '../screen/to_do_list_screen.dart';
-import '../model/todo_data_model.dart';
+import 'action/todo_data_model.dart';
 import '../action/nickNameProvider.dart';
 import '../screen/welcome.dart';
+import '../action/gaming_data_model.dart';
 
 void main() {
   runApp(
@@ -19,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ToDoDataModel()),
         ChangeNotifierProvider(create: (_) => nickNameProvider()),
         ChangeNotifierProvider(create: (_) => TimerModel()),
+        ChangeNotifierProvider(create: (_) => GamingDataModel()),
       ],
       child: MyApp(),
     ),

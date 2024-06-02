@@ -4,8 +4,7 @@ import '../const/colors.dart';
 import '../widget/set_to_do_date.dart';
 import '../widget/set_to_do_time.dart';
 import '../widget/to_do_card.dart';
-import '../model/todo_data_model.dart';
-import '../widget/todo.dart';
+import '../action/todo_data_model.dart';
 
 
 class AddToDo extends StatefulWidget {

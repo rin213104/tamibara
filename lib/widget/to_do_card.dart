@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
 import '../screen/edit_to_do_screen.dart';
 import 'package:provider/provider.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
 
 class ToDoCard extends StatefulWidget {
   String Id;
@@ -48,6 +48,14 @@ class _ToDoCardState extends State<ToDoCard> {
     isChecked = widget.isChecked;
   }
 
+  // 체크박스 오류로 인한 추가 함수
+  @override
+  void didUpdateWidget(ToDoCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isChecked != widget.isChecked) {
+      isChecked = widget.isChecked;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,18 +82,18 @@ class _ToDoCardState extends State<ToDoCard> {
               Flexible(
                 flex: 1,
                 child: Checkbox(
-                    value: isChecked,
-                    activeColor: TEXT_COLOR,
-                    checkColor: Colors.white,
-                    onChanged: (value) {
-                      setState(() {
-                        //isChecked = false;
-                        isChecked = value ?? false;
-                      });
-                      widget.onChecked(isChecked);
-                    }),
+                  value: isChecked,
+                  activeColor: TEXT_COLOR,
+                  checkColor: Colors.white,
+                  onChanged: (value) {
+                    setState(() {
+                      //isChecked = false;
+                      isChecked = value ?? false;
+                    });
+                    widget.onChecked(isChecked);
+                  },
+                ),
               ),
-
               Flexible(
                 flex: 6,
                 child: Container(
