@@ -121,12 +121,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           return ButtonWidget(
             text: '타이머 종료',
             onClicked: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ToDoScreen(),
-                ),
-              );
+              Navigator.pop(context);
             },
           );
         } else {

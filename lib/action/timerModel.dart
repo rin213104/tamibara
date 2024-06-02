@@ -109,6 +109,11 @@ class TimerModel extends ChangeNotifier {
     if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
+      Future.delayed(Duration(seconds:3), () {
+        if (_context != null) {
+          Navigator.pop(_context!);
+        }
+      });
     }
     if (_context != null) {
       // 경험치 분당 +0.25씩 증가하는 함수
