@@ -1,5 +1,0 @@
-Timer
-pubspec.yaml 파일
-  - dependencies 섹션에 intl 패키지를 추가, 터미널: flutter pub get(패키지 다운로드)
-  - dependencies 섹션에 flutter_spinkit 패키지 추가
-  - assets 섹션에 lib/images/image.png 이미지 경로 추가
