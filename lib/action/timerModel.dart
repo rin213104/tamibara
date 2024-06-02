@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 import  '../screen/to_do_list_screen.dart';
+import '../action/gaming_data_model.dart';
+import 'package:provider/provider.dart';
+
 
 // 타이머 종료 시 토스트 알림 메시지 리스트
 List<String> toastMessages = [
-  '대단해요! 목표 시간을 다 채웠어요!',
-  '멋져요! 시간을 알차게 사용했어요!',
-  '잘했어요! 목표 시간 달성!',
-  '축하합니다! 목표 시간을 모두 채웠네요!',
-  '훌륭해요! 목표 시간을 완수했어요!',
-  '우와! 목표 시간을 다 채웠어요!',
-  '잘했어요! 목표에 가까워졌어요!',
-  '멋져요! 시간 관리를 잘했어요!',
-  '훌륭합니다! 목표 시간을 모두 소화했어요!',
+  '대단해요!\n목표 시간을 다 채웠어요',
+  '멋져요!\n시간을 알차게 사용했어요',
+  '잘했어요!\n목표 시간 달성',
+  '축하합니다!\n목표 시간을 모두 채웠네요',
+  '훌륭해요!\n목표 시간을 완수했어요',
+  '우와!\n목표 시간을 다 채웠어요',
+  '잘했어요!\n목표에 가까워졌어요',
+  '멋져요!\n시간 관리를 잘했어요',
+  '훌륭합니다!\n목표 시간을 모두 소화했어요',
   '대단해요!'
 ];
 
@@ -106,26 +109,20 @@ class TimerModel extends ChangeNotifier {
     if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
-      // 10초 후 ToDoScreen으로 페이지 전환
-      Future.delayed(Duration(seconds: 6), () {
-        if (_context != null) {
-          Navigator.push(
-            _context!,
-            MaterialPageRoute(
-              builder: (context) => ToDoScreen(),
-            ),
-          );
-        }
-      });
     }
-
+    if (_context != null) {
+      // 경험치 분당 +0.25씩 증가하는 함수
+      Provider.of<GamingDataModel>(_context!, listen: false).increaseTimerEXP(maxSeconds);
+    }
   }
 
+  // 타이머 종료시 원본 이미지로 변환
   void resetImage() {
     modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
     notifyListeners();
   }
 
+  // 원본 캐릭터 이미지 저장
   void setOriginalImage(String imagePath) {
     originalImage = imagePath;
     // modifiedImage = imagePath; // originalImage와 modifiedImage를 동일하게 설정
