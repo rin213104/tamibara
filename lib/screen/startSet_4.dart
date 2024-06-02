@@ -46,8 +46,8 @@ class CharacterDetail extends StatelessWidget {
               ),
               Image.asset(
                 imagePath,
-                width: screenWidth * 0.6,
-                height: screenHeight * 0.4,
+                width: screenWidth * 0.4,
+                height: screenHeight * 0.3,
                 fit: BoxFit.contain,
               ),
               SizedBox(height: screenHeight * 0.02),
