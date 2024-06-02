@@ -110,9 +110,7 @@ class TimerModel extends ChangeNotifier {
       showRandomToastMessage(); // 토스트 알림
 
       if (_context != null) {
-        // GamingDataModel을 Provider에서 가져옴
-        //final gamingDataModel = Provider.of<GamingDataModel>(_context!, listen: false);
-        //gamingDataModel.increaseTimerEXP(maxSeconds);
+        // 경험치 분당 +0.25씩 증가하는 함수
         Provider.of<GamingDataModel>(_context!, listen: false).increaseTimerEXP(maxSeconds);
       }
 
