@@ -13,7 +13,7 @@ class GamingDataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void increaseTimerEXP(int duration) {
+  void increaseTimerEXP(int duration) { // 타이머 종료 시 분당 경험치 +0.25
     duration = duration ~/ 60;
     double temp = duration * 0.25;
     _EXP += temp;
