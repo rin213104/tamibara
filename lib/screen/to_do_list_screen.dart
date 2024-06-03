@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../action/todo_data_model.dart';
 import '../widget/customToast.dart'; // 토스트메시지
 import 'dart:math'; // 랜덤 메시지를 위해 추가
+import '../database/database_helper.dart'; // 데이터베이스 헬퍼 추가
 
 class ToDoScreen extends StatefulWidget { //투두 리스트 화면
   final List<ToDoCard> ToDoList = [];
@@ -30,7 +31,33 @@ class _setToDoScreenState extends State<ToDoScreen> {
     "수고했어요!\n앞으로도 열심히 해봐요!"
   ];
 
-  void _removePastTodos() { // 현재 날짜를 기준으로 지난 할 일들을 삭제
+  final DatabaseHelper dbHelper = DatabaseHelper(); // 데이터베이스 헬퍼 인스턴스 추가
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodos(); // 초기 로딩 시 데이터베이스에서 할 일 목록 불러오기
+  }
+
+  void _loadTodos() async {
+    final List<Todo> loadedTodos = await dbHelper.todos();
+    setState(() {
+      widget.ToDoList.clear();
+      widget.ToDoList.addAll(loadedTodos.map((todo) => ToDoCard(
+        Id: todo.id,
+        Title: todo.title,
+        Date: todo.date,
+        DurationTime: todo.durationTime,
+        Memo: todo.memo,
+        isChecked: todo.isChecked,
+        onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+        onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+        onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+      )));
+    });
+  }
+
+  void _removePastTodos() {
     var GamingData = Provider.of<GamingDataModel>(context, listen: false);
     DateTime now = DateTime.now();
     DateTime startOfDay = DateTime(now.year, now.month, now.day);
@@ -52,16 +79,27 @@ class _setToDoScreenState extends State<ToDoScreen> {
     if (isChecked) {
       Future.delayed(Duration(milliseconds: 100), () { // 상태 업데이트 후 약간의 딜레이를 줌
         setState(() {
+          dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
           widget.ToDoList.removeAt(index);
         });
         _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
         Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
       });
+    } else {
+      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+        id: widget.ToDoList[index].Id,
+        title: widget.ToDoList[index].Title,
+        date: widget.ToDoList[index].Date,
+        durationTime: widget.ToDoList[index].DurationTime,
+        memo: widget.ToDoList[index].Memo,
+        isChecked: isChecked,
+      ));
     }
   }
 
   void _ToDoDelete(index) {
     setState(() {
+      dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
       widget.ToDoList.removeAt(index);
     });
   }
@@ -80,6 +118,14 @@ class _setToDoScreenState extends State<ToDoScreen> {
         widget.ToDoList[index] = updatedToDo;
         widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
       });
+      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+        id: widget.ToDoList[index].Id,
+        title: widget.ToDoList[index].Title,
+        date: widget.ToDoList[index].Date,
+        durationTime: widget.ToDoList[index].DurationTime,
+        memo: widget.ToDoList[index].Memo,
+        isChecked: widget.ToDoList[index].isChecked,
+      ));
     }
   }
 
@@ -160,6 +206,16 @@ class _setToDoScreenState extends State<ToDoScreen> {
               widget.ToDoList.addAll(newToDoList);
               widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
             });
+            for (var todo in newToDoList) {
+              dbHelper.insertTodo(Todo( // 데이터베이스에 새 할 일 추가
+                id: todo.Id,
+                title: todo.Title,
+                date: todo.Date,
+                durationTime: todo.DurationTime,
+                memo: todo.Memo,
+                isChecked: todo.isChecked,
+              ));
+            }
           }
         },
         child: Icon(Icons.add, color: TEXT_COLOR),
@@ -180,7 +236,6 @@ class _setToDoScreenState extends State<ToDoScreen> {
       overlayEntry.remove();
     });
   }
-
 
   // 랜덤 메시지를 표시하는 함수 추가
   void _showRandomToast() {
