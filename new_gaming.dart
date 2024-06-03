@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -30,15 +31,89 @@ class CharacterScreen extends StatefulWidget {
 }
 
 class _CharacterScreenState extends State<CharacterScreen> {
-  String _currentCharacterImage = 'assets/images/capybara.png';
+  String _currentCharacterImage = 'assets/images/카돌.png';
   String _selectedButton = '';
   bool _isCharacterSelection = true;
+  String _currentSentence = '안녕!';
+
+  final Map<String, List<String>> _characterSentences = {
+    '카돌': [
+  '좋은 아침.',
+  '…',
+  '산책?',
+  '잘 잤나?',
+  '행복해.',
+  '할 수 있어.',
+  '힘내.',
+  '완벽해.',
+  '좋네.',
+  '파이팅.',
+
+  // Add more sentences for 카돌
+    ],
+    '곰돌': [
+  '오늘도 좋은 하루 보내자~',
+  '간지러워!',
+  '같이 공부할래?',
+  '날씨가 좋아! 같이 산책할까?',
+  '잘 잤어?',
+  '귀여운 미소 자주 보여 줘!',
+  '너랑 있으면 언제든 힘이 나.',
+  '나랑 늘 행복하자!',
+  '힘들 땐 내가 옆에 있을게.',
+  '너랑 함께한 날은 항상 완벽해!',
+  '너랑 있는 게 너무 좋아!',
+  '오늘도 힘내 보자!',
+  '우리가 함께라면 무적이야!',
+  '날 웃게 해 주는 건 너야~',
+  '오늘도 우리는 최강!',
+
+  // Add more sentences for 곰돌
+    ],
+    '냥돌': [
+  '어이, 늦잠 자지 말라고. -_-',
+  '뭐야, 간지럽히지 마!',
+  '공부가 어려워? 내가 봐 줘?',
+  '날씨 좋긴 하네.',
+  '잘 잤냐?',
+  '뭐, 그 미소… 나쁘진 않네. -_-^',
+  '너랑 있으면… 뭐, 나쁘진 않아.',
+  '힘들면 말해. 도와줄지도?',
+  '오늘도 힘내든가.',
+  '우리? 뭐, 무적일지도.',
+  '넌 가끔 웃기다니까.',
+  '너만 잘하면 우린 최강일지도?',
+  '좀 더 웃어 봐. 그래, 그렇게.',
+  '제법 기특한데.',
+  '오늘은 좀 즐겁달까.',
+      // Add more sentences for 냥돌
+    ],
+  };
 
   void _updateCharacterImage(String newImagePath) {
     setState(() {
       _currentCharacterImage = newImagePath;
       _selectedButton = newImagePath;
+      _updateSentence();
     });
+  }
+
+  void _updateSentence() {
+    String character = '';
+    if (_currentCharacterImage.contains('카돌')) {
+      character = '카돌';
+    } else if (_currentCharacterImage.contains('곰돌')) {
+      character = '곰돌';
+    } else if (_currentCharacterImage.contains('냥돌')) {
+      character = '냥돌';
+    }
+
+    if (character.isNotEmpty) {
+      final sentences = _characterSentences[character];
+      setState(() {
+        _currentSentence = sentences![Random().nextInt(sentences.length)];
+      });
+    }
   }
 
   void _showCharacterSelection() {
@@ -79,7 +154,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         ),
                         padding: EdgeInsets.all(10),
                         child: Text(
-                          '안녕!',
+                          _currentSentence,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -91,16 +166,19 @@ class _CharacterScreenState extends State<CharacterScreen> {
                       Positioned(
                         bottom: -15,
                         child: CustomPaint(
-                          size: Size(30, 30),
+                          size: Size(30, 20),
                           painter: TrianglePainter(),
                         ),
                       ),
                     ],
                   ),
-                  Image.asset(
-                    _currentCharacterImage,
-                    width: 200,
-                    height: 280,
+                  GestureDetector(
+                    onTap: _updateSentence,
+                    child: Image.asset(
+                      _currentCharacterImage,
+                      width: 200,
+                      height: 280,
+                    ),
                   ),
                   SizedBox(height: 20),
                   SizedBox(
@@ -153,25 +231,19 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildCharacterSection('카피바라', 'capybara'),
+                            _buildCharacterSection('카돌', '카돌'),
                             Divider(
                               height: 30,
                               thickness: 2,
                               color: Color(0xFFB4B4B4),
                             ),
-                            _buildCharacterSection('강아지', 'dog'),
+                            _buildCharacterSection('곰돌', '곰돌'),
                             Divider(
                               height: 30,
                               thickness: 2,
                               color: Color(0xFFB4B4B4),
                             ),
-                            _buildCharacterSection('고양이', 'cat'),
-                            Divider(
-                              height: 30,
-                              thickness: 2,
-                              color: Color(0xFFB4B4B4),
-                            ),
-                            _buildCharacterSection('햄스터', 'hamster'),
+                            _buildCharacterSection('냥돌', '냥돌'),
                           ],
                         ),
                       )
@@ -230,10 +302,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildImageButton('assets/images/${imagePrefix}_egg.png', '알'),
-            _buildImageButton('assets/images/${imagePrefix}_baby.png', '아기'),
-            _buildImageButton('assets/images/${imagePrefix}_child.png', '어린이'),
-            _buildImageButton('assets/images/${imagePrefix}_adult.png', '어른'),
+            _buildImageButton('assets/images/알.png', '알'),
+            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기'),
+            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이'),
+            _buildImageButton('assets/images/${imagePrefix}.png', '어른'),
           ],
         ),
       ],
