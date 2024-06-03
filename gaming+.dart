@@ -173,19 +173,23 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final nextStageRequirement = _stageRequirements[currentStage];
 
     if (growth >= nextStageRequirement!) {
-      _characterStats[_currentCharacter]!['stage'] = currentStage + 1;
-      _updateCharacterImage(
-        _currentCharacter,
-        _characterImages[_currentCharacter]![_characterStats[_currentCharacter]!['stage']!],
-      );
+      // 최대 단계인지 확인
+      if (currentStage < _characterImages[_currentCharacter]!.length - 1) {
+        _characterStats[_currentCharacter]!['stage'] = currentStage + 1;
+        _characterStats[_currentCharacter]!['growth'] = 0; // 성장도 초기화
+        _updateCharacterImage(
+          _currentCharacter,
+          _characterImages[_currentCharacter]![_characterStats[_currentCharacter]!['stage']!],
+        );
+      }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final growth = _characterStats[_currentCharacter]!['growth']!;
-    final maxGrowth = _stageRequirements.values.reduce((a, b) => a + b);
-    final growthPercentage = (growth / maxGrowth) * 100;
+    final currentStage = _characterStats[_currentCharacter]!['stage']!;
+    final nextStageRequirement = _stageRequirements[currentStage]!;
+    final growthPercentage = (growth / nextStageRequirement) * 100;
 
     return Scaffold(
       appBar: AppBar(
@@ -246,7 +250,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   SizedBox(
                     width: 200,
                     child: LinearProgressIndicator(
-                      value: growth / maxGrowth, // 성장도 선그래프
+                      value: growth / nextStageRequirement, // 성장도 선그래프
                       minHeight: 7,
                       borderRadius: BorderRadius.circular(10),
                       backgroundColor: Color(0xFFAFCBBF),
@@ -437,8 +441,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   Widget _buildCharacterStats() {
     final growth = _characterStats[_currentCharacter]!['growth']!;
+    final currentStage = _characterStats[_currentCharacter]!['stage']!;
+    final nextStageRequirement = _stageRequirements[currentStage]!;
+
     final intimacy = _characterStats[_currentCharacter]!['intimacy']!;
-    final maxGrowth = _stageRequirements.values.reduce((a, b) => a + b);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -452,7 +459,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
         SizedBox(height: 10),
         Text(
-          '성장도 | $growth / $maxGrowth XP ', //성장도 텍스트
+          '성장도 | $growth / $nextStageRequirement XP ', //성장도 텍스트
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
@@ -461,7 +468,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         SizedBox(
           width: 250,
           child: LinearProgressIndicator(
-            value: growth / maxGrowth, // 성장도 선그래프
+            value: growth / nextStageRequirement, // 성장도 선그래프
             minHeight: 7,
             borderRadius: BorderRadius.circular(10),
             backgroundColor: Color(0xFFAFCBBF),
