@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../action/timerModel.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/action/timerSlide.dart';
+import '../action/timerModel.dart';
+import '../action/timerSlide.dart';
 import '../const/colors.dart';
-
 
 class TimerSetup extends StatelessWidget {
   @override
@@ -30,11 +29,14 @@ class TimerSetup extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // 설정된 시간을 TimerModel에 전달하고 슬라이드 화면으로 이동
-              Provider.of<TimerModel>(context, listen: false).setMaxSeconds(SetTimeState.totalSeconds);
+              final timerModel = Provider.of<TimerModel>(context, listen: false);
+              timerModel.setMaxSeconds(SetTimeState.totalSeconds);
+              timerModel.resetImage();
+              timerModel.setContext(context); // context 설정
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+                  builder: (context) => TimerSlideExample(duration: SetTimeState.totalSeconds), // TimerSlide 화면으로 전환
                 ),
               );
             },
@@ -361,11 +363,14 @@ class CircularTimerButton extends StatelessWidget {
     return InkWell(
       onTap: () {
         final totalSeconds = time * 60;
-        Provider.of<TimerModel>(context, listen: false).setMaxSeconds(totalSeconds);
+        final timerModel = Provider.of<TimerModel>(context, listen: false);
+        timerModel.setMaxSeconds(totalSeconds);
+        timerModel.resetImage();  // 이미지 리셋
+        timerModel.setContext(context); // context 설정
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+            builder: (context) => TimerSlideExample(duration: totalSeconds), // TimerSlide 화면으로 전환
           ),
         );
       },

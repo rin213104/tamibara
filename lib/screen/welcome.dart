@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
-import 'goal.dart';
 import 'to_do_list_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {

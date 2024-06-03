@@ -1,5 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:math';
+import  '../screen/to_do_list_screen.dart';
+
+// 타이머 종료 시 토스트 알림 메시지 리스트
+List<String> toastMessages = [
+  '대단해요! 목표 시간을 다 채웠어요!',
+  '멋져요! 시간을 알차게 사용했어요!',
+  '잘했어요! 목표 시간 달성!',
+  '축하합니다! 목표 시간을 모두 채웠네요!',
+  '훌륭해요! 목표 시간을 완수했어요!',
+  '우와! 목표 시간을 다 채웠어요!',
+  '잘했어요! 목표에 가까워졌어요!',
+  '멋져요! 시간 관리를 잘했어요!',
+  '훌륭합니다! 목표 시간을 모두 소화했어요!',
+  '대단해요!'
+];
 
 // 타이머 모델
 class TimerModel extends ChangeNotifier {
@@ -10,12 +27,18 @@ class TimerModel extends ChangeNotifier {
   String? modifiedImage; // 변경된 이미지 경로를 저장
 
   Timer? _timer;
+  BuildContext? _context; // context를 저장할 변수
 
   void setMaxSeconds(int newMaxSeconds) {
     maxSeconds = newMaxSeconds;
     seconds = newMaxSeconds;
     elapsedSeconds = 0; // 경과 시간을 초기화
     notifyListeners();
+  }
+
+  // context를 저장할 변수
+  void setContext(BuildContext context) {
+    _context = context;
   }
 
   // 타이머 시작
@@ -54,7 +77,7 @@ class TimerModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 타이머 리셋
+  // 타이머 포기
   void resetTimer() {
     seconds = maxSeconds;
     elapsedSeconds = 0; // 경과 시간을 초기화
@@ -66,7 +89,6 @@ class TimerModel extends ChangeNotifier {
 
   // 타이머 종료 시 이미지 변경 함수
   void changeImageOnTimerEnd() {
-    // 현재 선택된 이미지를 변경하는 로직을 구현합니다.
     if (originalImage != null) {
       if (originalImage!.contains('곰돌기본채색.png')) {
         modifiedImage = 'assets/images/bear/곰돌신남채색.png';
@@ -75,18 +97,38 @@ class TimerModel extends ChangeNotifier {
       } else if (originalImage!.contains('냥돌기본채색.png')) {
         modifiedImage = 'assets/images/cat/냥돌신남채색.png';
       }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  // 타이머 종료 시 이미지 변경 호출
+  // 타이머 종료 시
   void onTimerEnd() {
-    changeImageOnTimerEnd();
+    if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
+      changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
+      showRandomToastMessage();   // 토스트 알림
+      // 10초 후 ToDoScreen으로 페이지 전환
+      Future.delayed(Duration(seconds: 6), () {
+        if (_context != null) {
+          Navigator.push(
+            _context!,
+            MaterialPageRoute(
+              builder: (context) => ToDoScreen(),
+            ),
+          );
+        }
+      });
+    }
+
+  }
+
+  void resetImage() {
+    modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
+    notifyListeners();
   }
 
   void setOriginalImage(String imagePath) {
     originalImage = imagePath;
-    modifiedImage = imagePath; // originalImage와 modifiedImage를 동일하게 설정
+    // modifiedImage = imagePath; // originalImage와 modifiedImage를 동일하게 설정
     notifyListeners();
   }
 
@@ -94,8 +136,19 @@ class TimerModel extends ChangeNotifier {
     return modifiedImage ?? originalImage;
   }
 
-  void resetImage() {
-    modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
-    notifyListeners();
+  // 랜덤 토스트 알림 메시지 표시
+  void showRandomToastMessage() {
+    final random = Random();
+    final selectedMessage = toastMessages[random.nextInt(toastMessages.length)];
+
+    Fluttertoast.showToast(
+      msg: selectedMessage,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 20.0,
+    );
   }
 }

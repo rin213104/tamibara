@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timer/screen/timerSetup.dart';
 import '../screen/to_do_list_screen.dart';
-import '../screen/profile.dart';
-import 'package:timer/screen/goal.dart';
-import 'package:timer/screen/startSet_1.dart'; // startSet_1 화면 import 추가
+import '../screen/option.dart';
 
 class MenuBottom extends StatelessWidget {
   const MenuBottom({
@@ -36,7 +34,7 @@ class MenuBottom extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => profile(),
+                builder: (context) => optionScreen(),
               ),
             );
             break;

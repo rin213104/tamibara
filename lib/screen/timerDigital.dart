@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +8,7 @@ import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
+import  '../screen/to_do_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,13 +25,17 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerDigitalPage(),
+        home: TimerDigitalPage(duration: 600), // 기본 이미지 경로 설정, 예: 600초 (10분)
       ),
     );
   }
 }
 
 class TimerDigitalPage extends StatefulWidget {
+  final int duration;
+
+  TimerDigitalPage({required this.duration});
+
   @override
   _TimerDigitalPageState createState() => _TimerDigitalPageState();
 }
@@ -46,6 +50,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
       if (selectedImageModel.selectedImage != null) {
         timerModel.setOriginalImage(selectedImageModel.selectedImage!); // 선택된 이미지를 TimerModel에 설정
       }
+      timerModel.setMaxSeconds(widget.duration); // Set the initial duration for the timer
     });
   }
 
@@ -99,6 +104,14 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
+  // 타이머 종료 시 이미지 변경 함수 호출
+  void onTimerEnd(BuildContext context) {
+    final timerModel = Provider.of<TimerModel>(context, listen: false);
+    final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
+    timerModel.changeImageOnTimerEnd();
+    selectedImageModel.setSelectedImage(timerModel.getCurrentImage()!);
+  }
+
   // 타이머 버튼
   Widget buildButton() {
     return Consumer2<TimerModel, SelectedImageModel>(
@@ -129,11 +142,42 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             ButtonWidget(
               text: '포기',
               onClicked: () {
-                timer.resetImage(); // modifiedImage를 originalImage로 복원
-                if (timer.originalImage != null) {
-                  selectedImageModel.setSelectedImage(timer.originalImage!);
-                }
-                timer.resetTimer();
+                timer.stopTimer(reset: false);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('정말로 포기하시겠습니까?'),
+                      content: Text('조금만 더 힘내보세요!!'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            timer.startTimer(reset: false);
+                          },
+                          child: Text('다시진행'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            timer.resetImage();
+                            if (timer.originalImage != null) {
+                              selectedImageModel.setSelectedImage(timer.originalImage!);
+                            }
+                            timer.resetTimer();
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ToDoScreen(),
+                              ),
+                            );
+                          },
+                          child: Text('포기'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],
@@ -162,7 +206,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
         // 타이머가 종료되면 onTimerEnd 함수 호출
         if (timer.seconds == 0 && timer.isRunning) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            onTimerEnd(context);
+            timer.onTimerEnd();
           });
         }
 
@@ -197,19 +241,6 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
         );
       },
     );
-  }
-
-  // 타이머 종료 시 이미지 변경 함수
-  void changeImageOnTimerEnd(BuildContext context) {
-    final timerModel = Provider.of<TimerModel>(context, listen: false);
-    final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
-    timerModel.changeImageOnTimerEnd();
-    selectedImageModel.setSelectedImage(timerModel.getCurrentImage()!);
-  }
-
-  // 타이머 종료 시 이미지 변경 함수 호출
-  void onTimerEnd(BuildContext context) {
-    changeImageOnTimerEnd(context);
   }
 
   // 페이지 2/2 표시

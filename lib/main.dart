@@ -24,41 +24,20 @@ void main() {
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      onGenerateRoute: (settings) {
-        if (settings.name == '/welcomeScreen') {
-          final args = settings.arguments as String;
-          return MaterialPageRoute(
-            builder: (context) {
-              return WelcomeScreen(selectedImage: args);
-            },
-          );
-        }
-        // 기본 라우트 처리
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (context) => LoginScreen());
-          case '/todolist':
-            return MaterialPageRoute(builder: (context) => ToDoScreen());
-          case '/timerSetup':
-            return MaterialPageRoute(builder: (context) => TimerSetup());
-          case '/timerSlide':
-            return MaterialPageRoute(builder: (context) => timerSlideExample());
-          default:
-            return null;
-        }
+      routes: {
+        '/': (context) => LoginScreen(),
+        '/todolist': (context) => ToDoScreen(),
+        '/timerSetup': (context) => TimerSetup(),
+        '/timerSlide': (context) => TimerSlideExample(duration: 600), // 기본 duration 값 설정 (예: 10분)
+        '/welcomeScreen': (context) => WelcomeScreen(selectedImage: 'assets/images/selected_image.png'),
       },
     );
   }

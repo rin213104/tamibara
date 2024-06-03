@@ -9,6 +9,7 @@ import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
+import  '../screen/to_do_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,27 +26,30 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerAnalogPage(), // 기본 이미지 경로 설정
+        home: TimerAnalogPage(duration: 0), // 기본값 설정
       ),
     );
   }
 }
 
 class TimerAnalogPage extends StatefulWidget {
+  final int duration;
+
+  TimerAnalogPage({required this.duration, Key? key}) : super(key: key);
+
   @override
   _TimerAnalogPageState createState() => _TimerAnalogPageState();
 }
 
 class _TimerAnalogPageState extends State<TimerAnalogPage> {
+  late TimerModel timerModel;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
-      final timerModel = Provider.of<TimerModel>(context, listen: false);
-      if (selectedImageModel.selectedImage != null) {
-        timerModel.setOriginalImage(selectedImageModel.selectedImage!); // 선택된 이미지를 TimerModel에 설정
-      }
+      timerModel = Provider.of<TimerModel>(context, listen: false);
+      timerModel.setMaxSeconds(widget.duration);
     });
   }
 
@@ -99,7 +103,13 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
     );
   }
 
-  // 타이머 버튼
+  void onTimerEnd(BuildContext context) {
+    final timerModel = Provider.of<TimerModel>(context, listen: false);
+    final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
+    timerModel.changeImageOnTimerEnd();
+    selectedImageModel.setSelectedImage(timerModel.getCurrentImage()!);
+  }
+
   Widget buildButton() {
     return Consumer2<TimerModel, SelectedImageModel>(
       builder: (context, timer, selectedImageModel, child) {
@@ -116,9 +126,8 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
                 if (isRunning) {
                   timer.stopTimer(reset: false);
                 } else {
-                  // 타이머를 다시 시작할 때 원래 이미지로 복원
                   if (timer.originalImage != null) {
-                    timer.resetImage(); // modifiedImage를 originalImage로 복원
+                    timer.resetImage();
                     selectedImageModel.setSelectedImage(timer.originalImage!);
                   }
                   timer.startTimer(reset: false);
@@ -129,11 +138,42 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
             ButtonWidget(
               text: '포기',
               onClicked: () {
-                timer.resetImage(); // modifiedImage를 originalImage로 복원
-                if (timer.originalImage != null) {
-                  selectedImageModel.setSelectedImage(timer.originalImage!);
-                }
-                timer.resetTimer();
+                timer.stopTimer(reset: false);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('정말로 포기하시겠습니까?'),
+                      content: Text('조금만 더 힘내 보세요!!'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            timer.startTimer(reset: false);
+                          },
+                          child: Text('다시진행'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            timer.resetImage();
+                            if (timer.originalImage != null) {
+                              selectedImageModel.setSelectedImage(timer.originalImage!);
+                            }
+                            timer.resetTimer();
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ToDoScreen(),
+                              ),
+                            );
+                          },
+                          child: Text('포기'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],
@@ -142,7 +182,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           text: '타이머 시작',
           onClicked: () {
             if (timer.originalImage != null) {
-              selectedImageModel.setSelectedImage(timer.originalImage!); // 원래 이미지로 복원
+              selectedImageModel.setSelectedImage(timer.originalImage!);
             }
             timer.startTimer();
           },
@@ -154,15 +194,14 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
   Widget buildTimer() {
     return Consumer2<TimerModel, SelectedImageModel>(
       builder: (context, timer, selectedImageModel, child) {
-        double progressValue = 0; // 기본 값을 0으로 설정
-        if (timer.maxSeconds > 0) { // maxSeconds가 0이 아닐 때만 계산
+        double progressValue = 0;
+        if (timer.maxSeconds > 0) {
           progressValue = timer.seconds / timer.maxSeconds;
         }
 
-        // 타이머가 종료되면 onTimerEnd 함수 호출
         if (timer.seconds == 0 && timer.isRunning) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            onTimerEnd(context);
+            timer.onTimerEnd();
           });
         }
 
@@ -175,15 +214,15 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
               SizedBox(
                 width: 350,
                 height: 350,
-                child: CircularProgressIndicator(  // 타이머 원형 진행 바
-                  value: progressValue, // 수정된 값 사용
+                child: CircularProgressIndicator(
+                  value: progressValue,
                   valueColor: AlwaysStoppedAnimation(Colors.white),
                   backgroundColor: PROGRESSBAR_COLOR,
                   strokeWidth: 20,
                 ),
               ),
               Positioned(
-                top: 30, // 원하는 y축 위치로 조정
+                top: 30,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -211,20 +250,6 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
     );
   }
 
-  // 타이머 종료 시 이미지 변경 함수
-  void changeImageOnTimerEnd(BuildContext context) {
-    final timerModel = Provider.of<TimerModel>(context, listen: false);
-    final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
-    timerModel.changeImageOnTimerEnd();
-    selectedImageModel.setSelectedImage(timerModel.getCurrentImage()!);
-  }
-
-  // 타이머 종료 시 이미지 변경 함수 호출
-  void onTimerEnd(BuildContext context) {
-    changeImageOnTimerEnd(context);
-  }
-
-  // 페이지 1/2 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

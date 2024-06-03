@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import '../screen/timerAnalog.dart';
 import '../screen/timerDigital.dart';
+import '../screen/timerGame.dart';
 
-// 타이머 슬라이드: timerAnalog, timerDigital 페이지 이동
-class timerSlideExample extends StatefulWidget {
+class TimerSlideExample extends StatefulWidget {
   final String? selectedImage;
-  timerSlideExample({this.selectedImage});
+  final int duration;
+
+  TimerSlideExample({this.selectedImage, required this.duration});
 
   @override
-  timerSlideExampleState createState() => timerSlideExampleState();  // 페이지 컨트롤러 설정
+  TimerSlideExampleState createState() => TimerSlideExampleState();
 }
 
-class timerSlideExampleState extends State<timerSlideExample> {
+class TimerSlideExampleState extends State<TimerSlideExample> {
   final PageController _pageController = PageController(initialPage: 0);
 
   @override
@@ -20,8 +22,9 @@ class timerSlideExampleState extends State<timerSlideExample> {
       body: PageView(
         controller: _pageController,
         children: [
-          TimerAnalogPage(),  // 아날로그 타이머 페이지
-          TimerDigitalPage(), // 디지털 타이머 페이지
+          TimerAnalogPage(duration: widget.duration), // 아날로그 타이머 페이지
+          TimerDigitalPage(duration: widget.duration), // 디지털 타이머 페이지
+          TimerGamePage(duration: widget.duration), // 타이머 게임 페이지
         ],
       ),
     );

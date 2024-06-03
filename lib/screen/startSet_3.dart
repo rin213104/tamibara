@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../screen/startSet_4.dart'; // 4 화면 import 추가
 import '../const/colors.dart';
-import '../screen/welcome.dart';
+import '../action/selectedImageModel.dart'; // SelectedImageModel 관련_0601
+import 'package:provider/provider.dart';  //  SelectedImageModel 관련_0601
 
 void main() {
   runApp(CharacterSelect());
@@ -88,6 +89,8 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
   Widget buildClickableImageWidget(BuildContext context, String imagePath, String description, double screenWidth, double screenHeight) {
     return GestureDetector(
       onTap: () {
+        // SelectedImageModel 관련 변경사항_0610
+        Provider.of<SelectedImageModel>(context, listen: false).setSelectedImage(imagePath);
         Navigator.push(
           context,
           MaterialPageRoute(

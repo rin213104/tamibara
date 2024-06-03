@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'startSet_2.dart';
+import '../screen/startSet_2.dart';
 import '../const/colors.dart';
 
 void main() {
