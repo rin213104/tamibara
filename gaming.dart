@@ -32,8 +32,8 @@ class CharacterScreen extends StatefulWidget {
 
 class _CharacterScreenState extends State<CharacterScreen> {
   String _currentCharacter = '카돌';
-  String _currentCharacterImage = 'assets/images/카돌.png';
-  String _selectedButton = '';
+  String _currentCharacterImage = 'assets/images/카돌알.png';
+  String _selectedButton = 'assets/images/카돌알.png';
   bool _isCharacterSelection = true;
   String _currentSentence = '안녕!';
 
@@ -87,9 +87,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 12000, 'intimacy': 30},
-    '곰돌': {'growth': 8000, 'intimacy': 50},
-    '냥돌': {'growth': 15000, 'intimacy': 70},
+    '카돌': {'growth': 12000, 'intimacy': 30, 'stage': 0},
+    '곰돌': {'growth': 8000, 'intimacy': 50, 'stage': 0},
+    '냥돌': {'growth': 15000, 'intimacy': 70, 'stage': 0},
   };
 
   void _updateCharacterImage(String character, String newImagePath) {
@@ -135,7 +135,6 @@ class _CharacterScreenState extends State<CharacterScreen> {
   Widget build(BuildContext context) {
     final growth = _characterStats[_currentCharacter]!['growth']!;
     final growthPercentage = (growth / 20000) * 100;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -190,10 +189,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     child: Image.asset(
                       _currentCharacterImage,
                       width: 200,
-                      height: 280,
+                      height: 200,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  //SizedBox(height: 20),
                   SizedBox(
                     width: 200,
                     child: LinearProgressIndicator(
@@ -315,23 +314,27 @@ class _CharacterScreenState extends State<CharacterScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildImageButton('assets/images/알.png', '알', characterName),
-            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기', characterName),
-            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이', characterName),
-            _buildImageButton('assets/images/${imagePrefix}.png', '어른', characterName),
+            _buildImageButton('assets/images/${imagePrefix}알.png', '알', characterName, 0),
+            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기', characterName, 1),
+            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이', characterName, 2),
+            _buildImageButton('assets/images/${imagePrefix}.png', '어른', characterName, 3),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildImageButton(String imagePath, String label, String characterName) {
+  Widget _buildImageButton(String imagePath, String label, String characterName, int stage) {
     bool isSelected = _selectedButton == imagePath;
+    bool isUnlocked = _characterStats[characterName]!['stage']! >= stage;
+
     return Column(
       children: [
         InkWell(
           onTap: () {
-            _updateCharacterImage(characterName, imagePath);
+            if (isUnlocked) {
+              _updateCharacterImage(characterName, imagePath);
+            }
           },
           borderRadius: BorderRadius.circular(50),
           child: Container(
@@ -340,19 +343,32 @@ class _CharacterScreenState extends State<CharacterScreen> {
             decoration: BoxDecoration(
               color: isSelected ? Color(0xFFA2D2C7) : Color(0xFFD9D9D9),
               shape: BoxShape.circle,
+              border: Border.all(
+                color: isUnlocked ? Colors.transparent : Colors.grey,
+                width: isUnlocked ? 0 : 2,
+              ),
             ),
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Image.asset(
-                  imagePath,
-                  width: 40,
-                  height: 40,
+                Opacity(
+                  opacity: isUnlocked ? 1.0 : 0.5,
+                  child: Image.asset(
+                    imagePath,
+                    width: 40,
+                    height: 40,
+                  ),
                 ),
-                if (isSelected)
+                if (isSelected && isUnlocked)
                   Icon(
                     Icons.check,
                     color: Colors.black,
+                    size: 30,
+                  ),
+                if (!isUnlocked)
+                  Icon(
+                    Icons.lock,
+                    color: Colors.black54,
                     size: 30,
                   ),
               ],
