@@ -31,6 +31,7 @@ class CharacterScreen extends StatefulWidget {
 }
 
 class _CharacterScreenState extends State<CharacterScreen> {
+  String _currentCharacter = '카돌';
   String _currentCharacterImage = 'assets/images/카돌.png';
   String _selectedButton = '';
   bool _isCharacterSelection = true;
@@ -48,8 +49,6 @@ class _CharacterScreenState extends State<CharacterScreen> {
       '완벽해.',
       '좋네.',
       '파이팅.',
-
-
     ],
     '곰돌': [
       '오늘도 좋은 하루 보내자~',
@@ -67,8 +66,6 @@ class _CharacterScreenState extends State<CharacterScreen> {
       '우리가 함께라면 무적이야!',
       '날 웃게 해 주는 건 너야~',
       '오늘도 우리는 최강!',
-
-
     ],
     '냥돌': [
       '어이, 늦잠 자지 말라고. -_-',
@@ -86,11 +83,18 @@ class _CharacterScreenState extends State<CharacterScreen> {
       '좀 더 웃어 봐. 그래, 그렇게.',
       '제법 기특한데.',
       '오늘은 좀 즐겁달까.',
-
     ],
   };
-  void _updateCharacterImage(String newImagePath) {
+
+  final Map<String, Map<String, int>> _characterStats = {
+    '카돌': {'growth': 12000, 'intimacy': 30},
+    '곰돌': {'growth': 8000, 'intimacy': 50},
+    '냥돌': {'growth': 15000, 'intimacy': 70},
+  };
+
+  void _updateCharacterImage(String character, String newImagePath) {
     setState(() {
+      _currentCharacter = character;
       _currentCharacterImage = newImagePath;
       _selectedButton = newImagePath;
       _updateSentence();
@@ -129,6 +133,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final growth = _characterStats[_currentCharacter]!['growth']!;
+    final growthPercentage = (growth / 20000) * 100;
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('03. 28. THU'),
@@ -189,7 +197,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   SizedBox(
                     width: 200,
                     child: LinearProgressIndicator(
-                      value: 0.6, //성장도 선그래프
+                      value: growth / 20000, // 성장도 선그래프
                       minHeight: 7,
                       borderRadius: BorderRadius.circular(10),
                       backgroundColor: Color(0xFFAFCBBF),
@@ -198,7 +206,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '60%', //성장도 퍼센테이지
+                    '${growthPercentage.toStringAsFixed(2)}%', // 성장도 퍼센테이지
                     style: TextStyle(fontSize: 12),
                   ),
                 ],
@@ -307,23 +315,23 @@ class _CharacterScreenState extends State<CharacterScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildImageButton('assets/images/알.png', '알'),
-            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기'),
-            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이'),
-            _buildImageButton('assets/images/${imagePrefix}.png', '어른'),
+            _buildImageButton('assets/images/알.png', '알', characterName),
+            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기', characterName),
+            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이', characterName),
+            _buildImageButton('assets/images/${imagePrefix}.png', '어른', characterName),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildImageButton(String imagePath, String label) {
+  Widget _buildImageButton(String imagePath, String label, String characterName) {
     bool isSelected = _selectedButton == imagePath;
     return Column(
       children: [
         InkWell(
           onTap: () {
-            _updateCharacterImage(imagePath);
+            _updateCharacterImage(characterName, imagePath);
           },
           borderRadius: BorderRadius.circular(50),
           child: Container(
@@ -358,11 +366,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
   }
 
   Widget _buildCharacterStats() {
+    final growth = _characterStats[_currentCharacter]!['growth']!;
+    final intimacy = _characterStats[_currentCharacter]!['intimacy']!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '캐릭터 이름 | 바돌',
+          '캐릭터 이름 | $_currentCharacter',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -371,7 +381,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
         SizedBox(height: 10),
         Text(
-          '성장도 | 12000 / 20000 XP (성체)', //성장도 텍스트
+          '성장도 | $growth / 20000 XP (성체)', //성장도 텍스트
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
@@ -380,7 +390,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         SizedBox(
           width: 250,
           child: LinearProgressIndicator(
-            value: 0.6, //성장도 선그래프
+            value: growth / 20000, // 성장도 선그래프
             minHeight: 7,
             borderRadius: BorderRadius.circular(10),
             backgroundColor: Color(0xFFAFCBBF),
@@ -389,7 +399,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
         SizedBox(height: 10),
         Text(
-          '친밀도 | 30 /100 (100%)',
+          '친밀도 | $intimacy / 100 (100%)',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
@@ -419,4 +429,3 @@ class TrianglePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-
