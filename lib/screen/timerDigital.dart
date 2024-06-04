@@ -278,6 +278,15 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             color: Color(0xFFAFCBBF),
           ),
         ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
+          ),
+        ),
       ],
     );
   }

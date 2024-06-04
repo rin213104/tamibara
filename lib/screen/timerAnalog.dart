@@ -289,6 +289,15 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
             color: Colors.grey,
           ),
         ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
+          ),
+        ),
       ],
     );
   }

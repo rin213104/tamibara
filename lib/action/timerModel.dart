@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
-import  '../screen/to_do_list_screen.dart';
 import '../action/gaming_data_model.dart';
 import 'package:provider/provider.dart';
-
+import '../widget/customToast.dart';
+import '../action/selectedImageModel.dart';
 
 // 타이머 종료 시 토스트 알림 메시지 리스트
 List<String> toastMessages = [
@@ -28,8 +28,11 @@ class TimerModel extends ChangeNotifier {
   int elapsedSeconds = 0; // 경과 시간을 관리하는 변수
   String? originalImage; // 원래 이미지 경로를 저장
   String? modifiedImage; // 변경된 이미지 경로를 저장
+  bool isAnimating = false; // 광질 애니메이션 상태 추가
+  bool isFirstImage = true; // 애니메이션 이미지를 번갈아가며 표시하기 위한 상태
 
   Timer? _timer;
+  Timer? _animationTimer;
   BuildContext? _context; // context를 저장할 변수
 
   void setMaxSeconds(int newMaxSeconds) {
@@ -42,6 +45,9 @@ class TimerModel extends ChangeNotifier {
   // context를 저장할 변수
   void setContext(BuildContext context) {
     _context = context;
+    // context를 설정할 때 SelectedImageModel에서 선택된 이미지를 가져옵니다.
+    final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
+    setOriginalImage(selectedImageModel.selectedImage!);
   }
 
   // 타이머 시작
@@ -55,6 +61,15 @@ class TimerModel extends ChangeNotifier {
       elapsedSeconds = 0; // 경과 시간을 초기화
       modifiedImage = originalImage; // 이미지 복원
     }
+
+    isAnimating = true; // 광질 애니메이션 시작
+    notifyListeners();
+
+    // 애니메이션 타이머 시작
+    _animationTimer = Timer.periodic(Duration(milliseconds: 500), (_) {
+      isFirstImage = !isFirstImage;
+      notifyListeners();
+    });
 
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
       if (elapsedSeconds < maxSeconds) {
@@ -77,6 +92,8 @@ class TimerModel extends ChangeNotifier {
       modifiedImage = originalImage; // 이미지 복원
     }
     _timer?.cancel();
+    _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    isAnimating = false; // 광질 애니메이션 정지
     notifyListeners();
   }
 
@@ -85,6 +102,8 @@ class TimerModel extends ChangeNotifier {
     seconds = maxSeconds;
     elapsedSeconds = 0; // 경과 시간을 초기화
     modifiedImage = originalImage; // 이미지 복원
+    _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    isAnimating = false; // 광질 애니메이션 정지
     notifyListeners();
   }
 
@@ -110,13 +129,16 @@ class TimerModel extends ChangeNotifier {
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
     }
+    _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    isAnimating = false; // 애니메이션 정지
+    notifyListeners();
     if (_context != null) {
       // 경험치 분당 +0.25씩 증가하는 함수
       Provider.of<GamingDataModel>(_context!, listen: false).increaseTimerEXP(maxSeconds);
     }
   }
 
-  // 타이머 종료시 원본 이미지로 변환
+  // 타이머 종료시 원본 이미지로 복원
   void resetImage() {
     modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
     notifyListeners();
@@ -125,7 +147,6 @@ class TimerModel extends ChangeNotifier {
   // 원본 캐릭터 이미지 저장
   void setOriginalImage(String imagePath) {
     originalImage = imagePath;
-    // modifiedImage = imagePath; // originalImage와 modifiedImage를 동일하게 설정
     notifyListeners();
   }
 
@@ -135,17 +156,19 @@ class TimerModel extends ChangeNotifier {
 
   // 랜덤 토스트 알림 메시지 표시
   void showRandomToastMessage() {
-    final random = Random();
-    final selectedMessage = toastMessages[random.nextInt(toastMessages.length)];
+    if (_context != null) {
+      final random = Random();
+      final selectedMessage = toastMessages[random.nextInt(toastMessages.length)];
+      final overlay = Overlay.of(_context!);
+      final overlayEntry = OverlayEntry(
+        builder: (context) => customToast(message: selectedMessage),
+      );
 
-    Fluttertoast.showToast(
-      msg: selectedMessage,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 5,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 20.0,
-    );
+      overlay?.insert(overlayEntry);
+
+      Future.delayed(Duration(seconds: 10), () {
+        overlayEntry.remove();
+      });
+    }
   }
 }

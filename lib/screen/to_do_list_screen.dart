@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timer/action/gaming_data_model.dart';
+import '../action/gaming_data_model.dart';
 import '../widget/to_do_card.dart';
 import '../const/colors.dart';
 import '../screen/add_to_do_screen.dart';
@@ -7,10 +7,11 @@ import '../screen/edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../action/todo_data_model.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // 토스트 알림을 위해 추가
+import '../widget/customToast.dart'; // 토스트 메시지
 import 'dart:math'; // 랜덤 메시지를 위해 추가
+import '../database/database_helper.dart'; // 데이터베이스 헬퍼 추가
 
-class ToDoScreen extends StatefulWidget { //투두 리스트 화면
+class ToDoScreen extends StatefulWidget {
   final List<ToDoCard> ToDoList = [];
 
   ToDoScreen({Key? key}) : super(key: key);
@@ -30,21 +31,35 @@ class _setToDoScreenState extends State<ToDoScreen> {
     "수고했어요!\n앞으로도 열심히 해봐요!"
   ];
 
-  /*
+  final DatabaseHelper dbHelper = DatabaseHelper(); // 데이터베이스 헬퍼 인스턴스 추가
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _removePastTodos();
+    _loadTodos(); // 초기 로딩 시 데이터베이스에서 할 일 목록 불러오기
+  }
+
+  void _loadTodos() async {
+    await dbHelper.deletePastTodos(); // 지난 할 일 삭제
+    final List<Todo> loadedTodos = await dbHelper.todos();
+    setState(() {
+      widget.ToDoList.clear();
+      widget.ToDoList.addAll(loadedTodos.map((todo) => ToDoCard(
+        Id: todo.id,
+        Title: todo.title,
+        Date: todo.date,
+        DurationTime: todo.durationTime,
+        Memo: todo.memo,
+        isChecked: todo.isChecked,
+        onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+        onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+        onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+      )));
     });
   }
 
-   */
-
-  void _removePastTodos() { // 현재 날짜를 기준으로 지난 할 일들을 삭제
+  /*void _removePastTodos() {
     var GamingData = Provider.of<GamingDataModel>(context, listen: false);
-    //print("removePastTodos,,,,,,,,,,,,,,,,,,,,,");
-
     DateTime now = DateTime.now();
     DateTime startOfDay = DateTime(now.year, now.month, now.day);
     int initialLength = widget.ToDoList.length;
@@ -58,6 +73,8 @@ class _setToDoScreenState extends State<ToDoScreen> {
     }
   }
 
+   */
+
   void _handleToDoChecked(bool isChecked, int index) {
     setState(() {
       widget.ToDoList[index].isChecked = isChecked; // 상태 업데이트
@@ -65,16 +82,27 @@ class _setToDoScreenState extends State<ToDoScreen> {
     if (isChecked) {
       Future.delayed(Duration(milliseconds: 100), () { // 상태 업데이트 후 약간의 딜레이를 줌
         setState(() {
+          dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
           widget.ToDoList.removeAt(index);
         });
         _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
         Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
       });
+    } else {
+      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+        id: widget.ToDoList[index].Id,
+        title: widget.ToDoList[index].Title,
+        date: widget.ToDoList[index].Date,
+        durationTime: widget.ToDoList[index].DurationTime,
+        memo: widget.ToDoList[index].Memo,
+        isChecked: isChecked,
+      ));
     }
   }
 
   void _ToDoDelete(index) {
     setState(() {
+      dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
       widget.ToDoList.removeAt(index);
     });
   }
@@ -88,11 +116,19 @@ class _setToDoScreenState extends State<ToDoScreen> {
     );
 
     if (editResults != null) {
+      final ToDoCard updatedToDo = editResults;
       setState(() {
-        ToDoCard updatedToDo = editResults[0];
         widget.ToDoList[index] = updatedToDo;
         widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
       });
+      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+        id: widget.ToDoList[index].Id,
+        title: widget.ToDoList[index].Title,
+        date: widget.ToDoList[index].Date,
+        durationTime: widget.ToDoList[index].DurationTime,
+        memo: widget.ToDoList[index].Memo,
+        isChecked: widget.ToDoList[index].isChecked,
+      ));
     }
   }
 
@@ -101,7 +137,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
     var ToDoData = Provider.of<ToDoDataModel>(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _removePastTodos();
+      dbHelper.deletePastTodos();
     });
 
     return Scaffold(
@@ -110,48 +146,72 @@ class _setToDoScreenState extends State<ToDoScreen> {
         color: PRIMARY_COLOR,
         child: Padding(
           padding: EdgeInsets.all(16.0),
-          child: widget.ToDoList.isEmpty
-              ? SizedBox.expand()
-              : ListView.builder(
-            itemCount: widget.ToDoList.length,
-            itemBuilder: (context, index) {
-              bool showDateDivider = index == 0 ||
-                  widget.ToDoList[index].Date != widget.ToDoList[index - 1].Date;
+          child: StreamBuilder<List<Todo>>(
+            stream: dbHelper.todoStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('오늘은 어떤 일을 해볼까요?'));
+              } else {
+                final todos = snapshot.data!;
+                widget.ToDoList.clear();
+                widget.ToDoList.addAll(todos.map((todo) => ToDoCard(
+                  Id: todo.id,
+                  Title: todo.title,
+                  Date: todo.date,
+                  DurationTime: todo.durationTime,
+                  Memo: todo.memo,
+                  isChecked: todo.isChecked,
+                  onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+                  onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+                  onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+                )));
+                return ListView.builder(
+                  itemCount: widget.ToDoList.length,
+                  itemBuilder: (context, index) {
+                    bool showDateDivider = index == 0 ||
+                        widget.ToDoList[index].Date != widget.ToDoList[index - 1].Date;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (showDateDivider) ...[
-                    SizedBox(height: 10),
-                    Text(
-                      '${widget.ToDoList[index].Date.year}.${widget.ToDoList[index].Date.month}.${widget.ToDoList[index].Date.day}',
-                      style: TextStyle(
-                        color: TEXT_COLOR,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Divider(
-                      thickness: 1.3,
-                      color: TEXT_COLOR,
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                  ToDoCard(
-                    Id: widget.ToDoList[index].Id,
-                    Title: widget.ToDoList[index].Title,
-                    Date: widget.ToDoList[index].Date,
-                    DurationTime: widget.ToDoList[index].DurationTime,
-                    Memo: widget.ToDoList[index].Memo,
-                    isChecked: widget.ToDoList[index].isChecked,
-                    onChecked: (isChecked) => _handleToDoChecked(isChecked, index),
-                    onCancel: () => _ToDoDelete(index),
-                    onEdit: () {
-                      _ToDoEdit(index);
-                    },
-                  ),
-                  SizedBox(height: 10),
-                ],
-              );
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (showDateDivider) ...[
+                          SizedBox(height: 10),
+                          Text(
+                            '${widget.ToDoList[index].Date.year}.${widget.ToDoList[index].Date.month}.${widget.ToDoList[index].Date.day}',
+                            style: TextStyle(
+                              color: TEXT_COLOR,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Divider(
+                            thickness: 1.3,
+                            color: TEXT_COLOR,
+                          ),
+                          SizedBox(height: 10),
+                        ],
+                        ToDoCard(
+                          Id: widget.ToDoList[index].Id,
+                          Title: widget.ToDoList[index].Title,
+                          Date: widget.ToDoList[index].Date,
+                          DurationTime: widget.ToDoList[index].DurationTime,
+                          Memo: widget.ToDoList[index].Memo,
+                          isChecked: widget.ToDoList[index].isChecked,
+                          onChecked: (isChecked) => _handleToDoChecked(isChecked, index),
+                          onCancel: () => _ToDoDelete(index),
+                          onEdit: () {
+                            _ToDoEdit(index);
+                          },
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                );
+              }
             },
           ),
         ),
@@ -173,6 +233,16 @@ class _setToDoScreenState extends State<ToDoScreen> {
               widget.ToDoList.addAll(newToDoList);
               widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
             });
+            for (var todo in newToDoList) {
+              dbHelper.insertTodo(Todo( // 데이터베이스에 새 할 일 추가
+                id: todo.Id,
+                title: todo.Title,
+                date: todo.Date,
+                durationTime: todo.DurationTime,
+                memo: todo.Memo,
+                isChecked: todo.isChecked,
+              ));
+            }
           }
         },
         child: Icon(Icons.add, color: TEXT_COLOR),
@@ -181,24 +251,24 @@ class _setToDoScreenState extends State<ToDoScreen> {
     );
   }
 
+  void showCustomToast(BuildContext context, String message) {
+    OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => customToast(message: message),
+    );
+
+    Overlay.of(context)!.insert(overlayEntry);
+
+    // 일정 시간 후 토스트 알림을 제거합니다.
+    Future.delayed(Duration(seconds: 2)).then((_) {
+      overlayEntry.remove();
+    });
+  }
+
   // 랜덤 메시지를 표시하는 함수 추가
   void _showRandomToast() {
     final random = Random();
     final message = _congratulatoryMessages[random.nextInt(_congratulatoryMessages.length)];
-    _showToast(message);
-  }
-
-  // 토스트 알림을 위한 함수 추가
-  void _showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 5,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 20.0,
-    );
+    showCustomToast(context, message);
   }
 }
 

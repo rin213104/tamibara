@@ -82,16 +82,16 @@ class _ToDoCardState extends State<ToDoCard> {
               Flexible(
                 flex: 1,
                 child: Checkbox(
-                    value: isChecked,
-                    activeColor: TEXT_COLOR,
-                    checkColor: Colors.white,
-                    onChanged: (value) {
-                      setState(() {
-                        //isChecked = false;
-                        isChecked = value ?? false;
-                      });
-                      widget.onChecked(isChecked);
-                    },
+                  value: isChecked,
+                  activeColor: TEXT_COLOR,
+                  checkColor: Colors.white,
+                  onChanged: (value) {
+                    setState(() {
+                      //isChecked = false;
+                      isChecked = value ?? false;
+                    });
+                    widget.onChecked(isChecked);
+                  },
                 ),
               ),
               Flexible(

@@ -28,7 +28,7 @@ class ToDoDataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /*void removeToDoById(String id) {
+/*void removeToDoById(String id) {
     ToDoList.removeWhere((todo) => todo.Id == id);
     int index = ToDoList.indexWhere((todo) => todo.Id == id);
     ToDoList[index].isChecked = false;
@@ -38,5 +38,3 @@ class ToDoDataModel extends ChangeNotifier {
    */
 
 }
-
-
