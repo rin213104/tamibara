@@ -72,7 +72,7 @@ class DatabaseHelper {
     _updateStream();
   }
 
-  Future<void> deleteTodo(String id) async {
+  Future<void> deleteTodo(String id) async { // 할 일 삭제
     final db = await database;
     await db.delete(
       'todos',
@@ -82,7 +82,7 @@ class DatabaseHelper {
     _updateStream();
   }
 
-  Future<void> deletePastTodos() async {
+  Future<void> deletePastTodos() async { // 지난 할 일 삭제
     final db = await database;
     DateTime now = DateTime.now();
     DateTime startOfDay = DateTime(now.year, now.month, now.day);
