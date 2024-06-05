@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
 import '../const/colors.dart';
 
 class SetTime extends StatefulWidget {
-  final ValueChanged<Duration> onDurationSelected;
-
-  SetTime({Key? key, required this.onDurationSelected}) : super(key: key);
+  SetTime({Key? key}) : super(key: key);
 
   @override
   State<SetTime> createState() => _SetTimeState();
@@ -64,7 +62,6 @@ class _SetTimeState extends State<SetTime> {
                         initialTime: Duration(hours: hour, minutes: minute, seconds: second),
                         onDurationSelected: (newData) {
                           toDoData.setSelectedDuration(newData.inSeconds);
-                          widget.onDurationSelected(newData); // 새로운 시간을 전달
                         },
                       );
                     },

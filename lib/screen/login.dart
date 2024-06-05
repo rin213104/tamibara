@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../const/colors.dart';
 import 'dart:async';
 import 'startSet_3.dart';
-import '../utils/uuid_helper.dart';
 
 void main() {
   runApp(MyApp());
@@ -61,12 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
               width: screenWidth * 0.5,
               height: screenHeight * 0.06,
               child: ElevatedButton(
-                onPressed: () async {
-                  String uuid = await UUIDHelper.getUUID(); // UUID 생성 및 가져오기
+                onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CharacterSelect(), // 다음 화면으로 전환
+                      builder: (context) => CharacterSelect(), // startSet_1 화면으로 전환
                     ),
                   );
                 },

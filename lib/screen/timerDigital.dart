@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -25,17 +26,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerDigitalPage(duration: 600), // 기본 이미지 경로 설정, 예: 600초 (10분)
+        home: TimerDigitalPage(),
       ),
     );
   }
 }
 
 class TimerDigitalPage extends StatefulWidget {
-  final int duration;
-
-  TimerDigitalPage({required this.duration});
-
   @override
   _TimerDigitalPageState createState() => _TimerDigitalPageState();
 }
@@ -50,9 +47,9 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
       if (selectedImageModel.selectedImage != null) {
         timerModel.setOriginalImage(selectedImageModel.selectedImage!); // 선택된 이미지를 TimerModel에 설정
       }
-      timerModel.setMaxSeconds(widget.duration); // Set the initial duration for the timer
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +67,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
                     const SizedBox(height: 50),
                     buildButton(), // Timer control buttons
                     const SizedBox(height: 30), // 하단 여백을 주기 위해 추가
-                    buildDotsIndicator(), // 원형 동그라미 추가
+                    buildDotsIndicator(), // 타이머 페이지를 나타내는 슬라이드 dot
                   ],
                 ),
               ),
@@ -90,6 +87,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     child: buildDateText(),
   );
 
+  // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
     final now = DateTime.now();
     final formattedDate = DateFormat('MM.dd.EEE').format(now);
@@ -119,81 +117,97 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
         final isRunning = timer.isRunning;
         final isCompleted = timer.seconds == timer.maxSeconds || timer.seconds == 0;
 
-        return isRunning || !isCompleted
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ButtonWidget(
-              text: isRunning ? '중지' : '재시작',
-              onClicked: () {
-                if (isRunning) {
-                  timer.stopTimer(reset: false);
-                } else {
-                  // 타이머를 다시 시작할 때 원래 이미지로 복원
-                  if (timer.originalImage != null) {
-                    timer.resetImage(); // modifiedImage를 originalImage로 복원
-                    selectedImageModel.setSelectedImage(timer.originalImage!);
+        if (timer.seconds == 0 && !isRunning) {
+          // 타이머가 종료된 상태
+          return ButtonWidget(
+            text: '타이머 종료',
+            onClicked: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ToDoScreen(),
+                ),
+              );
+            },
+          );
+        } else {
+          return isRunning || !isCompleted
+              ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ButtonWidget(
+                text: isRunning ? '중지' : '재시작',
+                onClicked: () {
+                  if (isRunning) {
+                    timer.stopTimer(reset: false);
+                  } else {
+                    // 타이머를 다시 시작할 때 원래 이미지로 복원
+                    if (timer.originalImage != null) {
+                      timer.resetImage(); // modifiedImage를 originalImage로 복원
+                      selectedImageModel.setSelectedImage(timer.originalImage!);
+                    }
+                    timer.startTimer(reset: false);
                   }
-                  timer.startTimer(reset: false);
-                }
-              },
-            ),
-            const SizedBox(width: 12),
-            ButtonWidget(
-              text: '포기',
-              onClicked: () {
-                timer.stopTimer(reset: false);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('정말로 포기하시겠습니까?'),
-                      content: Text('조금만 더 힘내보세요!!'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            timer.startTimer(reset: false);
-                          },
-                          child: Text('다시진행'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            timer.resetImage();
-                            if (timer.originalImage != null) {
-                              selectedImageModel.setSelectedImage(timer.originalImage!);
-                            }
-                            timer.resetTimer();
-                            Navigator.of(context).pop();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ToDoScreen(),
-                              ),
-                            );
-                          },
-                          child: Text('포기'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        )
-            : ButtonWidget(
-          text: '타이머 시작',
-          onClicked: () {
-            if (timer.originalImage != null) {
-              selectedImageModel.setSelectedImage(timer.originalImage!); // 원래 이미지로 복원
-            }
-            timer.startTimer();
-          },
-        );
+                },
+              ),
+              const SizedBox(width: 12),
+              ButtonWidget(
+                text: '포기',
+                onClicked: () {
+                  timer.stopTimer(reset: false);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('정말로 포기하시겠습니까?'),
+                        content: Text('경험치를 받을 수 없게 됩니다'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              timer.startTimer(reset: false);
+                            },
+                            child: Text('다시진행'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              timer.resetImage();
+                              if (timer.originalImage != null) {
+                                selectedImageModel.setSelectedImage(timer.originalImage!);
+                              }
+                              timer.resetTimer();
+                              Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ToDoScreen(),
+                                ),
+                              );
+                            },
+                            child: Text('포기'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          )
+              : ButtonWidget(
+            text: '타이머 시작',
+            onClicked: () {
+              if (timer.originalImage != null) {
+                selectedImageModel.setSelectedImage(timer.originalImage!); // 원래 이미지로 복원
+              }
+              timer.startTimer();
+            },
+          );
+        }
       },
     );
   }
+
 
   Widget buildTimer() {
     return Consumer2<TimerModel, SelectedImageModel>(
@@ -210,6 +224,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           });
         }
 
+        String? folder = selectedImageModel.selectedFolder;
+        String image1 = 'assets/images/$folder/${folder}달림1.png';
+        String image2 = 'assets/images/$folder/${folder}달림2.png';
+        double imageSize = timer.isAnimating ? 80.0 : 80.0;
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -223,9 +242,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             ),
             SizedBox(height: 20),
             Image.asset(
-              timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
-              width: 80,
-              height: 80,
+              timer.isAnimating
+                  ? (timer.isFirstImage ? image1 : image2)
+                  : timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
+              width: imageSize,
+              height: imageSize,
             ),
             SizedBox(height: 30),
             SizedBox(
@@ -243,7 +264,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
-  // 페이지 2/2 표시
+  // 페이지 2/3 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -263,6 +284,15 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFAFCBBF),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
           ),
         ),
       ],

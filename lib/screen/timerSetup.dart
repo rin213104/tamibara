@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../action/timerModel.dart';
-import '../action/timerSlide.dart';
+import 'package:provider/provider.dart';
+import 'package:timer/action/timerSlide.dart';
 import '../const/colors.dart';
 
 class TimerSetup extends StatelessWidget {
@@ -36,7 +36,7 @@ class TimerSetup extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TimerSlideExample(duration: SetTimeState.totalSeconds), // TimerSlide 화면으로 전환
+                  builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
                 ),
               );
             },
@@ -370,7 +370,7 @@ class CircularTimerButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TimerSlideExample(duration: totalSeconds), // TimerSlide 화면으로 전환
+            builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
           ),
         );
       },

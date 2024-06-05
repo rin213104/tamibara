@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
 import '../const/colors.dart';
 
 class SetDate extends StatefulWidget {
-  final ValueChanged<DateTime> onDateSelected;
-
-  SetDate({Key? key, required this.onDateSelected}) : super(key: key);
+  SetDate({Key? key}) : super(key: key);
 
   @override
   State<SetDate> createState() => _SetDateState();
@@ -17,7 +15,7 @@ class _SetDateState extends State<SetDate> {
   Widget build(BuildContext context) {
     return Consumer<ToDoDataModel>(
       builder: (context, toDoData, _) {
-        DateTime selectedDate = toDoData.selectedDate;
+        DateTime selectedDate = toDoData.selectedDate; // 변경된 부분: ToDoDataModel에서 selectedDate 가져오기
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,8 +56,8 @@ class _SetDateState extends State<SetDate> {
                       return DateWheelPicker(
                         initialDate: selectedDate,
                         onDateSelected: (newDate) {
+                          // 변경된 부분: toDoData.setSeletedDate로 업데이트
                           toDoData.setSelectedDate(newDate);
-                          widget.onDateSelected(newDate); // 새로운 날짜를 전달
                         },
                       );
                     },

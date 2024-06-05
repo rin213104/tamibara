@@ -4,7 +4,8 @@ import '../const/colors.dart';
 import '../widget/set_to_do_date.dart';
 import '../widget/set_to_do_time.dart';
 import '../widget/to_do_card.dart';
-import '../model/todo_data_model.dart';
+import '../action/todo_data_model.dart';
+
 
 class AddToDo extends StatefulWidget {
   AddToDo({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _setAddToDoState extends State<AddToDo> {
 
   @override
   Widget build(BuildContext context) {
-    var toDoData = Provider.of<ToDoDataModel>(context);
+    var ToDoData = Provider.of<ToDoDataModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,15 +49,8 @@ class _setAddToDoState extends State<AddToDo> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     AddToDoBody(
-                      titleController: titleController,
-                      memoController: memoController,
-                      onDateSelected: (newDate) {
-                        toDoData.setSelectedDate(newDate);
-                      },
-                      onDurationSelected: (newDuration) {
-                        toDoData.setSelectedDuration(newDuration.inSeconds);
-                      },
-                    ),
+                        titleController: titleController,
+                        memoController: memoController),
                     SizedBox(height: 20),
                   ],
                 ),
@@ -68,26 +62,19 @@ class _setAddToDoState extends State<AddToDo> {
               child: TextButton(
                 onPressed: () {
                   final newToDo = ToDoCard(
-                    id: DateTime.now().toString(),
-                    title: titleController.text,
-                    date: toDoData.selectedDate,
-                    durationTime: toDoData.selectedDuration,
-                    memo: memoController.text,
+                    Id: DateTime.now().toString(),
+                    Title: titleController.text,
+                    Date: ToDoData.selectedDate,
+                    DurationTime: ToDoData.selectedDuration,
+                    Memo: memoController.text,
                     isChecked: false,
                     onChecked: (isChecked) {
                       if (isChecked) setState(() {});
                     },
-                    onCancel: () {
-                      setState(() {});
-                    },
-                    onEdit: () {
-                      setState(() {});
-                    },
-                    onTap: () {
-                      // Handle onTap action here
-                    },
+                    onCancel: () {setState(() {});},
+                    onEdit: () {setState(() {});},
                   );
-                  print('ToDo: ${newToDo.id}--------------${newToDo.date}--------------${newToDo.durationTime}');
+                  print('ToDo: ${newToDo.Id}--------------${newToDo.Date}--------------${newToDo.DurationTime}');
                   Navigator.pop(context, [newToDo]);
                 },
                 style: TextButton.styleFrom(
@@ -112,20 +99,18 @@ class _setAddToDoState extends State<AddToDo> {
   }
 }
 
-Widget AddToDoBody({
-  required TextEditingController titleController,
-  required TextEditingController memoController,
-  required ValueChanged<DateTime> onDateSelected,
-  required ValueChanged<Duration> onDurationSelected,
-}) {
+
+Widget AddToDoBody(
+    {required TextEditingController titleController,
+      required TextEditingController memoController}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: <Widget>[
       InputTitle(titleController: titleController),
       SizedBox(height: 2),
-      SetDate(onDateSelected: onDateSelected),
+      SetDate(),
       SizedBox(height: 30),
-      SetTime(onDurationSelected: onDurationSelected),
+      SetTime(),
       SizedBox(height: 30),
       InputMemo(memoController: memoController),
     ],
@@ -213,7 +198,7 @@ class InputMemo extends StatelessWidget {
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Divider(
             thickness: 1.3,
-            color: TEXT_COLOR,
+            color:TEXT_COLOR,
           ),
         ),
         SizedBox(height: 8.0),
