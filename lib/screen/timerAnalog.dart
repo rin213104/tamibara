@@ -9,7 +9,7 @@ import '../widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
-import  '../screen/to_do_list_screen.dart';
+import '../screen/to_do_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -121,7 +121,12 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           return ButtonWidget(
             text: '타이머 종료',
             onClicked: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ToDoScreen(),
+                ),
+              );
             },
           );
         } else {
@@ -217,6 +222,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           });
         }
 
+        String? folder = selectedImageModel.selectedFolder;
+        String image1 = 'assets/images/$folder/${folder}달림1.png';
+        String image2 = 'assets/images/$folder/${folder}달림2.png';
+        double imageSize = timer.isAnimating ? 80.0 : 80.0;
+
         return SizedBox(
           width: 200,
           height: 200,
@@ -248,9 +258,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
                     ),
                     SizedBox(height: 5),
                     Image.asset(
-                      timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png',
-                      width: 80,
-                      height: 80,
+                      timer.isAnimating
+                          ? (timer.isFirstImage ? image1 : image2)
+                          : timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png',
+                      width: imageSize,
+                      height: imageSize,
                     ),
                   ],
                 ),
@@ -262,7 +274,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
     );
   }
 
-  // 페이지 1/2 표시
+  // 페이지 1/3 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -273,6 +285,15 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFAFCBBF),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
           ),
         ),
         const SizedBox(width: 8),

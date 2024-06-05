@@ -1,33 +1,18 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../shared/menu_bottom.dart';
-import '../action/timerModel.dart'; // TimerModel 경로 확인
+import '../action/timerModel.dart';
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class TimerGamePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TimerModel()),
-        ChangeNotifierProvider(create: (_) => SelectedImageModel()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: TimerGamePage(), // 기본 이미지 경로 설정
-      ),
-    );
-  }
+  _TimerGamePageState createState() => _TimerGamePageState();
 }
 
-class TimerGamePage extends StatelessWidget {
+class _TimerGamePageState extends State<TimerGamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +22,41 @@ class TimerGamePage extends StatelessWidget {
           buildTopBar(context),
           Expanded(
             child: Center(
-              child: Text(
-                'Timer Game Content',
-                style: TextStyle(fontSize: 24),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    bottom: 160,
+                    child: Image.asset(
+                      'assets/images/stone.png',
+                      width: 300,
+                      height: 400,
+                    ),
+                  ),
+                  Consumer2<TimerModel, SelectedImageModel>(
+                    builder: (context, timerModel, selectedImageModel, child) {
+                      String? folder = selectedImageModel.selectedFolder;
+                      String image1 = 'assets/images/$folder/${folder}광질1.png';
+                      String image2 = 'assets/images/$folder/${folder}광질2.png';
+                      double imageSize = timerModel.isAnimating ? 250.0 : 200.0;
+                      return Positioned(
+                        right: 20,
+                        bottom: 140,
+                        child: Image.asset(
+                          timerModel.isAnimating
+                              ? (timerModel.isFirstImage ? image1 : image2)
+                              : timerModel.modifiedImage ?? selectedImageModel.selectedImage ?? 'assets/images/bear/곰돌기본채색.png',
+                          width: imageSize,
+                          height: imageSize,
+                        ),
+                      );
+                    },
+                  ),
+                  Positioned(
+                    bottom: 120, // 원하는 위치로 조정
+                    child: buildDotsIndicator(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -70,6 +87,40 @@ class TimerGamePage extends StatelessWidget {
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
+    );
+  }
+
+  Widget buildDotsIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFFAFCBBF),
+          ),
+        ),
+      ],
     );
   }
 }

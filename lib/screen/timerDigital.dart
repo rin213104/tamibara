@@ -50,6 +50,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +122,12 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           return ButtonWidget(
             text: '타이머 종료',
             onClicked: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ToDoScreen(),
+                ),
+              );
             },
           );
         } else {
@@ -218,6 +224,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           });
         }
 
+        String? folder = selectedImageModel.selectedFolder;
+        String image1 = 'assets/images/$folder/${folder}달림1.png';
+        String image2 = 'assets/images/$folder/${folder}달림2.png';
+        double imageSize = timer.isAnimating ? 80.0 : 80.0;
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -231,9 +242,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             ),
             SizedBox(height: 20),
             Image.asset(
-              timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
-              width: 80,
-              height: 80,
+              timer.isAnimating
+                  ? (timer.isFirstImage ? image1 : image2)
+                  : timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
+              width: imageSize,
+              height: imageSize,
             ),
             SizedBox(height: 30),
             SizedBox(
@@ -251,7 +264,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
-  // 페이지 2/2 표시
+  // 페이지 2/3 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -271,6 +284,15 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFAFCBBF),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
           ),
         ),
       ],
