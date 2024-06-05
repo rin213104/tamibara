@@ -76,27 +76,28 @@ class _setToDoScreenState extends State<ToDoScreen> {
    */
 
   void _handleToDoChecked(bool isChecked, int index) {
-    setState(() {
-      widget.ToDoList[index].isChecked = isChecked; // 상태 업데이트
-    });
+    // 체크 상태가 변경된 후 데이터베이스 업데이트
     if (isChecked) {
-      Future.delayed(Duration(milliseconds: 100), () { // 상태 업데이트 후 약간의 딜레이를 줌
+      dbHelper.deleteTodo(widget.ToDoList[index].Id).then((_) {
         setState(() {
-          dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
           widget.ToDoList.removeAt(index);
+          _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
+          Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
         });
-        _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
-        Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
       });
     } else {
-      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+      dbHelper.updateTodo(Todo(
         id: widget.ToDoList[index].Id,
         title: widget.ToDoList[index].Title,
         date: widget.ToDoList[index].Date,
         durationTime: widget.ToDoList[index].DurationTime,
         memo: widget.ToDoList[index].Memo,
         isChecked: isChecked,
-      ));
+      )).then((_) {
+        setState(() {
+          widget.ToDoList[index].isChecked = isChecked;
+        });
+      });
     }
   }
 
@@ -194,6 +195,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
                           SizedBox(height: 10),
                         ],
                         ToDoCard(
+                          key: ValueKey(widget.ToDoList[index].Id), // 고유 키 추가
                           Id: widget.ToDoList[index].Id,
                           Title: widget.ToDoList[index].Title,
                           Date: widget.ToDoList[index].Date,
