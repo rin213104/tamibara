@@ -29,10 +29,15 @@ class TimerModel extends ChangeNotifier {
   String? originalImage; // 원래 이미지 경로를 저장
   String? modifiedImage; // 변경된 이미지 경로를 저장
   bool isAnimating = false; // 광질 애니메이션 상태 추가
+  bool isGemAnimating = false; // 보석 애니메이션 상태 추가
   bool isFirstImage = true; // 애니메이션 이미지를 번갈아가며 표시하기 위한 상태
+  String stoneImage = 'assets/images/stone1.png'; // 바위 이미지 경로
+  String? gemImage1; // 보석 이미지 1
+  String? gemImage2; // 보석 이미지 2
 
   Timer? _timer;
   Timer? _animationTimer;
+  Timer? _gemAnimationTimer; // 보석 애니메이션 타이머
   BuildContext? _context; // context를 저장할 변수
 
   void setMaxSeconds(int newMaxSeconds) {
@@ -62,7 +67,10 @@ class TimerModel extends ChangeNotifier {
       modifiedImage = originalImage; // 이미지 복원
     }
 
+    stoneImage = 'assets/images/stone1.png'; // 타이머 시작 시 바위 이미지 초기화
+
     isAnimating = true; // 광질 애니메이션 시작
+    isGemAnimating = false; // 보석 애니메이션 중지
     notifyListeners();
 
     // 애니메이션 타이머 시작
@@ -90,10 +98,13 @@ class TimerModel extends ChangeNotifier {
       seconds = maxSeconds;
       elapsedSeconds = 0; // 경과 시간을 초기화
       modifiedImage = originalImage; // 이미지 복원
+      stoneImage = 'assets/images/stone1.png'; // 타이머 정지 시 바위 이미지 초기화
     }
     _timer?.cancel();
     _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    _gemAnimationTimer?.cancel(); // 보석 애니메이션 타이머 정지
     isAnimating = false; // 광질 애니메이션 정지
+    isGemAnimating = false; // 보석 애니메이션 정지
     notifyListeners();
   }
 
@@ -102,8 +113,11 @@ class TimerModel extends ChangeNotifier {
     seconds = maxSeconds;
     elapsedSeconds = 0; // 경과 시간을 초기화
     modifiedImage = originalImage; // 이미지 복원
+    stoneImage = 'assets/images/stone1.png'; // 타이머 포기 시 바위 이미지 초기화
     _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    _gemAnimationTimer?.cancel(); // 보석 애니메이션 타이머 정지
     isAnimating = false; // 광질 애니메이션 정지
+    isGemAnimating = false; // 보석 애니메이션 정지
     notifyListeners();
   }
 
@@ -111,27 +125,51 @@ class TimerModel extends ChangeNotifier {
 
   // 타이머 종료 시 이미지 변경 함수
   void changeImageOnTimerEnd() {
-    if (originalImage != null) {
-      if (originalImage!.contains('곰돌기본채색.png')) {
-        modifiedImage = 'assets/images/bear/곰돌신남채색.png';
-      } else if (originalImage!.contains('카피바라성년.png')) {
-        modifiedImage = 'assets/images/capybara/카피바라기쁨.png';
-      } else if (originalImage!.contains('냥돌기본채색.png')) {
-        modifiedImage = 'assets/images/cat/냥돌신남채색.png';
+    if (_context != null) {
+      final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
+      String? folder = selectedImageModel.selectedFolder;
+
+      if (folder != null) {
+        gemImage1 = 'assets/images/$folder/${folder}보석1.png';
+        gemImage2 = 'assets/images/$folder/${folder}보석2.png';
+        isGemAnimating = true; // 보석 애니메이션 시작
+
+        // 보석 애니메이션 타이머 시작
+        _gemAnimationTimer = Timer.periodic(Duration(milliseconds: 500), (_) {
+          isFirstImage = !isFirstImage;
+          notifyListeners();
+        });
       }
+
+      // modifiedImage 설정
+      if (originalImage != null) {
+        if (originalImage!.contains('곰돌기본채색.png')) {
+          modifiedImage = 'assets/images/bear/곰돌신남채색.png';
+        } else if (originalImage!.contains('카피바라성년.png')) {
+          modifiedImage = 'assets/images/capybara/카피바라기쁨.png';
+        } else if (originalImage!.contains('냥돌기본채색.png')) {
+          modifiedImage = 'assets/images/cat/냥돌신남채색.png';
+        }
+      }
+
+      stoneImage = 'assets/images/stone2.png'; // 타이머 종료 시 바위 이미지 변경
       notifyListeners();
     }
   }
 
+
   // 타이머 종료 시
   void onTimerEnd() {
+    _animationTimer?.cancel(); // 애니메이션 타이머 정지
+    isAnimating = false; // 광질 애니메이션 정지
+
     if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
     }
-    _animationTimer?.cancel(); // 애니메이션 타이머 정지
-    isAnimating = false; // 애니메이션 정지
-    notifyListeners();
+
+    // notifyListeners();
+
     if (_context != null) {
       // 경험치 분당 +0.25씩 증가하는 함수
       Provider.of<GamingDataModel>(_context!, listen: false).increaseTimerEXP(maxSeconds);
@@ -141,6 +179,9 @@ class TimerModel extends ChangeNotifier {
   // 타이머 종료시 원본 이미지로 복원
   void resetImage() {
     modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
+    stoneImage = 'assets/images/stone1.png';
+    isGemAnimating = false; // 보석 애니메이션 정지
+    _gemAnimationTimer?.cancel(); // 보석 애니메이션 타이머 정지
     notifyListeners();
   }
 

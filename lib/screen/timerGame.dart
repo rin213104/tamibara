@@ -14,6 +14,18 @@ class TimerGamePage extends StatefulWidget {
 
 class _TimerGamePageState extends State<TimerGamePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
+      final timerModel = Provider.of<TimerModel>(context, listen: false);
+      if (selectedImageModel.selectedImage != null) {
+        timerModel.setOriginalImage(selectedImageModel.selectedImage!); // 선택된 이미지를 TimerModel에 설정
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PRIMARY_COLOR,
@@ -25,13 +37,17 @@ class _TimerGamePageState extends State<TimerGamePage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Positioned(
-                    bottom: 160,
-                    child: Image.asset(
-                      'assets/images/stone.png',
-                      width: 300,
-                      height: 400,
-                    ),
+                  Consumer<TimerModel>(
+                    builder: (context, timerModel, child) {
+                      return Positioned(
+                        bottom: 160,
+                        child: Image.asset(
+                          timerModel.stoneImage,
+                          width: 300,
+                          height: 400,
+                        ),
+                      );
+                    },
                   ),
                   Consumer2<TimerModel, SelectedImageModel>(
                     builder: (context, timerModel, selectedImageModel, child) {
@@ -39,13 +55,16 @@ class _TimerGamePageState extends State<TimerGamePage> {
                       String image1 = 'assets/images/$folder/${folder}광질1.png';
                       String image2 = 'assets/images/$folder/${folder}광질2.png';
                       double imageSize = timerModel.isAnimating ? 250.0 : 200.0;
+
                       return Positioned(
                         right: 20,
-                        bottom: 140,
+                        bottom: 150,
                         child: Image.asset(
-                          timerModel.isAnimating
+                          timerModel.isGemAnimating
+                              ? (timerModel.isFirstImage ? timerModel.gemImage1! : timerModel.gemImage2!)
+                              : (timerModel.isAnimating
                               ? (timerModel.isFirstImage ? image1 : image2)
-                              : timerModel.modifiedImage ?? selectedImageModel.selectedImage ?? 'assets/images/bear/곰돌기본채색.png',
+                              : timerModel.modifiedImage ?? selectedImageModel.selectedImage ?? 'assets/images/bear/곰돌기본채색.png'),
                           width: imageSize,
                           height: imageSize,
                         ),
