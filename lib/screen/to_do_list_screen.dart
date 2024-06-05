@@ -122,12 +122,12 @@ class _setToDoScreenState extends State<ToDoScreen> {
         widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
       });
       dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
-        id: widget.ToDoList[index].Id,
-        title: widget.ToDoList[index].Title,
-        date: widget.ToDoList[index].Date,
-        durationTime: widget.ToDoList[index].DurationTime,
-        memo: widget.ToDoList[index].Memo,
-        isChecked: widget.ToDoList[index].isChecked,
+        id: updatedToDo.Id,
+        title: updatedToDo.Title,
+        date: updatedToDo.Date,
+        durationTime: updatedToDo.DurationTime,
+        memo: updatedToDo.Memo,
+        isChecked: updatedToDo.isChecked,
       ));
     }
   }
