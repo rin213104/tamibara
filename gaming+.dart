@@ -91,7 +91,38 @@ class _CharacterScreenState extends State<CharacterScreen> {
     '곰돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
     '냥돌': {'growth': 0, 'intimacy': 70, 'stage': 0, 'totalGrowth': -23000},
   };
+  void _increaseGrowth() {
+    setState(() {
+      final stats = _characterStats[_currentCharacter]!;
+      final currentStage = stats['stage']!;
+      final currentGrowth = stats['growth']!;
+      final totalGrowth = stats['totalGrowth']!;
 
+      stats['totalGrowth'] = totalGrowth + 1000;
+
+      if (currentStage < 3) {
+        final requiredGrowth = _growthRequirements[currentStage]!;
+        if (currentGrowth + 1000 >= requiredGrowth) {
+          stats['growth'] = 0;
+          stats['stage'] = currentStage + 1;
+
+          String newImagePath;
+          if (_currentCharacter == '카돌') {
+            newImagePath = 'assets/images/카돌${_stageSuffix(currentStage + 1)}.png';
+          } else if (_currentCharacter == '곰돌') {
+            newImagePath = 'assets/images/곰돌${_stageSuffix(currentStage + 1)}.png';
+          } else {
+            newImagePath = 'assets/images/냥돌${_stageSuffix(currentStage + 1)}.png';
+          }
+          _updateCharacterImage(_currentCharacter, newImagePath);
+        } else {
+          stats['growth'] = currentGrowth + 1000;
+        }
+      } else {
+        stats['growth'] = currentGrowth + 1000;
+      }
+    });
+  }
   final Map<int, int> _growthRequirements = {
     0: 3600,
     1: 7200,
@@ -137,38 +168,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
     });
   }
 
-  /*void _increaseGrowth() {
-    setState(() {
-      final stats = _characterStats[_currentCharacter]!;
-      final currentStage = stats['stage']!;
-      final currentGrowth = stats['growth']!;
-      final totalGrowth = stats['totalGrowth']!;
 
-      stats['totalGrowth'] = totalGrowth + 1000;
-
-      if (currentStage < 3) {
-        final requiredGrowth = _growthRequirements[currentStage]!;
-        if (currentGrowth + 1000 >= requiredGrowth) {
-          stats['growth'] = 0;
-          stats['stage'] = currentStage + 1;
-
-          String newImagePath;
-          if (_currentCharacter == '카돌') {
-            newImagePath = 'assets/images/카돌${_stageSuffix(currentStage + 1)}.png';
-          } else if (_currentCharacter == '곰돌') {
-            newImagePath = 'assets/images/곰돌${_stageSuffix(currentStage + 1)}.png';
-          } else {
-            newImagePath = 'assets/images/냥돌${_stageSuffix(currentStage + 1)}.png';
-          }
-          _updateCharacterImage(_currentCharacter, newImagePath);
-        } else {
-          stats['growth'] = currentGrowth + 1000;
-        }
-      } else {
-        stats['growth'] = currentGrowth + 1000;
-      }
-    });
-  }*/
 
   String _stageSuffix(int stage) {
     switch (stage) {
@@ -303,7 +303,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         _buildCircleButton('assets/images/love.png'),
                         _buildCircleButton('assets/images/chara.png'),
                         _buildCircleButton('assets/images/plus.png'),
-                        //_buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
+                        _buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
                       ],
                     ),
                     SizedBox(height: 20),
