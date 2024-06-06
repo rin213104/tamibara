@@ -87,37 +87,15 @@ class _CharacterScreenState extends State<CharacterScreen> {
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0}, //성장도, 친밀도, 성장단계
-    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0},
-    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0},
+    '카돌': {'growth': 0, 'intimacy': 30, 'stage': 0, 'totalGrowth': -23000},
+    '곰돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
+    '냥돌': {'growth': 0, 'intimacy': 70, 'stage': 0, 'totalGrowth': -23000},
   };
 
-  final Map<int, int> _stageRequirements = {
+  final Map<int, int> _growthRequirements = {
     0: 3600,
     1: 7200,
     2: 10800,
-
-  };
-
-  final Map<String, List<String>> _characterImages = {
-    '카돌': [
-      'assets/images/카돌알.png',
-      'assets/images/카돌아기.png',
-      'assets/images/카돌어린이.png',
-      'assets/images/카돌.png',
-    ],
-    '곰돌': [
-      'assets/images/곰돌알.png',
-      'assets/images/곰돌아기.png',
-      'assets/images/곰돌어린이.png',
-      'assets/images/곰돌.png',
-    ],
-    '냥돌': [
-      'assets/images/냥돌알.png',
-      'assets/images/냥돌아기.png',
-      'assets/images/냥돌어린이.png',
-      'assets/images/냥돌.png',
-    ],
   };
 
   void _updateCharacterImage(String character, String newImagePath) {
@@ -159,37 +137,86 @@ class _CharacterScreenState extends State<CharacterScreen> {
     });
   }
 
-  void _increaseGrowth() {
+  /*void _increaseGrowth() {
     setState(() {
-      _characterStats[_currentCharacter]!['growth'] =
-          _characterStats[_currentCharacter]!['growth']! + 1000;
-      _checkForStageUnlock();
-    });
-  }
+      final stats = _characterStats[_currentCharacter]!;
+      final currentStage = stats['stage']!;
+      final currentGrowth = stats['growth']!;
+      final totalGrowth = stats['totalGrowth']!;
 
-  void _checkForStageUnlock() {
-    final growth = _characterStats[_currentCharacter]!['growth']!;
-    final currentStage = _characterStats[_currentCharacter]!['stage']!;
-    final nextStageRequirement = _stageRequirements[currentStage];
+      stats['totalGrowth'] = totalGrowth + 1000;
 
-    if (growth >= nextStageRequirement!) {
-      // 최대 단계인지 확인
-      if (currentStage < _characterImages[_currentCharacter]!.length - 1) {
-        _characterStats[_currentCharacter]!['stage'] = currentStage + 1;
-        _characterStats[_currentCharacter]!['growth'] = 0; // 성장도 초기화
-        _updateCharacterImage(
-          _currentCharacter,
-          _characterImages[_currentCharacter]![_characterStats[_currentCharacter]!['stage']!],
-        );
+      if (currentStage < 3) {
+        final requiredGrowth = _growthRequirements[currentStage]!;
+        if (currentGrowth + 1000 >= requiredGrowth) {
+          stats['growth'] = 0;
+          stats['stage'] = currentStage + 1;
+
+          String newImagePath;
+          if (_currentCharacter == '카돌') {
+            newImagePath = 'assets/images/카돌${_stageSuffix(currentStage + 1)}.png';
+          } else if (_currentCharacter == '곰돌') {
+            newImagePath = 'assets/images/곰돌${_stageSuffix(currentStage + 1)}.png';
+          } else {
+            newImagePath = 'assets/images/냥돌${_stageSuffix(currentStage + 1)}.png';
+          }
+          _updateCharacterImage(_currentCharacter, newImagePath);
+        } else {
+          stats['growth'] = currentGrowth + 1000;
+        }
+      } else {
+        stats['growth'] = currentGrowth + 1000;
       }
+    });
+  }*/
+
+  String _stageSuffix(int stage) {
+    switch (stage) {
+      case 0:
+        return '알';
+      case 1:
+        return '아기';
+      case 2:
+        return '어린이';
+      case 3:
+      default:
+        return '';
     }
   }
+  Widget _buildLinearProgressIndicator(int currentStage, int growth, int requiredGrowth, int totalGrowth) {
+    if (currentStage < 3) {
+      return SizedBox(
+        width: 200,
+        child: LinearProgressIndicator(
+          value: growth / requiredGrowth,
+          minHeight: 7,
+          borderRadius: BorderRadius.circular(10),
+          backgroundColor: Color(0xFFAFCBBF),
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: 200,
+        child: LinearProgressIndicator(
+          value: totalGrowth / (totalGrowth + 1),
+          minHeight: 7,
+          borderRadius: BorderRadius.circular(10),
+          backgroundColor: Color(0xFFAFCBBF),
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final growth = _characterStats[_currentCharacter]!['growth']!;
-    final currentStage = _characterStats[_currentCharacter]!['stage']!;
-    final nextStageRequirement = _stageRequirements[currentStage]!;
-    final growthPercentage = (growth / nextStageRequirement) * 100;
+    final stats = _characterStats[_currentCharacter]!;
+    final growth = stats['growth']!;
+    final totalGrowth = stats['totalGrowth']!;
+    final currentStage = stats['stage']!;
+    final requiredGrowth = _growthRequirements[currentStage] ?? 1;
+    final growthPercentage = (growth / requiredGrowth) * 100;
 
     return Scaffold(
       appBar: AppBar(
@@ -249,22 +276,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   ),
                   SizedBox(
                     width: 200,
-                    child: LinearProgressIndicator(
-                      value: growth / nextStageRequirement, // 성장도 선그래프
-                      minHeight: 7,
-                      borderRadius: BorderRadius.circular(10),
-                      backgroundColor: Color(0xFFAFCBBF),
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
-                    ),
+                    child: _buildLinearProgressIndicator(currentStage, growth, requiredGrowth, totalGrowth),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '${growthPercentage.toStringAsFixed(2)}%', // 성장도 퍼센테이지
+                    currentStage < 3 ?  '${growthPercentage.toStringAsFixed(2)}%' : '성장도: $totalGrowth',
                     style: TextStyle(fontSize: 12),
-                  ),
-                  ElevatedButton(
-                    onPressed: _increaseGrowth,
-                    child: Text("성장도 증가"),
                   ),
                 ],
               ),
@@ -283,9 +300,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildCircleButton('assets/images/love.png'), // love 버튼, 추후 추가 예정
-                        _buildCircleButton('assets/images/chara.png'), // chara 버튼, 캐릭터를 변경할 수 있는 기능
-                        _buildCircleButton('assets/images/plus.png'), // plus 버튼, 캐릭터의 성장도와 친밀도를 볼 수 있는 기능
+                        _buildCircleButton('assets/images/love.png'),
+                        _buildCircleButton('assets/images/chara.png'),
+                        _buildCircleButton('assets/images/plus.png'),
+                        //_buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
                       ],
                     ),
                     SizedBox(height: 20),
@@ -297,7 +315,6 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     Expanded(
                       child: _isCharacterSelection
                           ? SingleChildScrollView(
-                        // 캐릭터를 선택하여 변경할 수 있는 기능
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -317,7 +334,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                           ],
                         ),
                       )
-                          : _buildCharacterStats(), // Show character stats if plus button is selected
+                          : _buildCharacterStats(),
                     ),
                   ],
                 ),
@@ -329,9 +346,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
     );
   }
 
-  Widget _buildCircleButton(String imagePath) {
+
+  Widget _buildCircleButton(String imagePath, [VoidCallback? onTap]) {
     return InkWell(
-      onTap: () {
+      onTap: onTap ?? () {
         if (imagePath == 'assets/images/plus.png') {
           _showCharacterStats();
         } else if (imagePath == 'assets/images/chara.png') {
@@ -440,11 +458,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
   }
 
   Widget _buildCharacterStats() {
-    final growth = _characterStats[_currentCharacter]!['growth']!;
-    final currentStage = _characterStats[_currentCharacter]!['stage']!;
-    final nextStageRequirement = _stageRequirements[currentStage]!;
-
-    final intimacy = _characterStats[_currentCharacter]!['intimacy']!;
+    final stats = _characterStats[_currentCharacter]!;
+    final growth = stats['growth']!;
+    final totalGrowth = stats['totalGrowth']!;
+    final intimacy = stats['intimacy']!;
+    final currentStage = stats['stage']!;
+    final requiredGrowth = _growthRequirements[currentStage] ?? 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,7 +478,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
         SizedBox(height: 10),
         Text(
-          '성장도 | $growth / $nextStageRequirement XP ', //성장도 텍스트
+          currentStage < 3 ? '성장도 | $growth / $requiredGrowth XP (${_stageSuffix(currentStage)})' : '총 성장도 | $totalGrowth',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
@@ -468,7 +487,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         SizedBox(
           width: 250,
           child: LinearProgressIndicator(
-            value: growth / nextStageRequirement, // 성장도 선그래프
+            value: currentStage < 3 ? growth / requiredGrowth : totalGrowth / (totalGrowth + 1),
             minHeight: 7,
             borderRadius: BorderRadius.circular(10),
             backgroundColor: Color(0xFFAFCBBF),
@@ -477,7 +496,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
         SizedBox(height: 10),
         Text(
-          '친밀도 | $intimacy / 100 ❤',
+          '친밀도 | $intimacy / 100 (100%)',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
