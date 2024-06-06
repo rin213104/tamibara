@@ -36,7 +36,7 @@ class TimerSetup extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+                  builder: (context) => timerSlideExample(todoTitle: '기본 타이머'), // timerSlide 화면으로 전환
                 ),
               );
             },
@@ -370,7 +370,7 @@ class CircularTimerButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => timerSlideExample(), // timerSlide 화면으로 전환
+            builder: (context) => timerSlideExample(todoTitle: '기본 타이머'), // timerSlide 화면으로 전환
           ),
         );
       },

@@ -26,13 +26,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerAnalogPage(), // 기본 이미지 경로 설정
+        home: TimerAnalogPage(title: 'Your Timer Title'), // 기본 이미지 경로 설정
       ),
     );
   }
 }
 
 class TimerAnalogPage extends StatefulWidget {
+  final String title;
+  TimerAnalogPage({required this.title});
+
   @override
   _TimerAnalogPageState createState() => _TimerAnalogPageState();
 }
@@ -88,14 +91,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
 
   // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('MM.dd.EEE').format(now);
-
     return Text(
-      formattedDate,
+      widget.title, // title로 변경
       style: TextStyle(
         color: TIMER_COLOR,
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -222,7 +222,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           });
         }
 
-        String? folder = selectedImageModel.selectedFolder;
+        String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
         String image1 = 'assets/images/$folder/${folder}달림1.png';
         String image2 = 'assets/images/$folder/${folder}달림2.png';
         double imageSize = timer.isAnimating ? 80.0 : 80.0;

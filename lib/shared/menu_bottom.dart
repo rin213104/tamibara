@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timer/screen/timerSetup.dart';
 import '../screen/to_do_list_screen.dart';
 import '../screen/option.dart';
-import '../screen/new_gaming.dart';
+import '../screen/gaming+.dart';
 
 class MenuBottom extends StatelessWidget {
   const MenuBottom({
@@ -35,7 +35,7 @@ class MenuBottom extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => gameSlide(),
+                builder: (context) => CharacterScreen(),
               ),
             );
             break;

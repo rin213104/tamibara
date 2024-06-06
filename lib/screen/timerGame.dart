@@ -8,6 +8,9 @@ import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
 
 class TimerGamePage extends StatefulWidget {
+  final String title;
+  TimerGamePage({required this.title}); // 생성자 수정
+
   @override
   _TimerGamePageState createState() => _TimerGamePageState();
 }
@@ -51,7 +54,7 @@ class _TimerGamePageState extends State<TimerGamePage> {
                   ),
                   Consumer2<TimerModel, SelectedImageModel>(
                     builder: (context, timerModel, selectedImageModel, child) {
-                      String? folder = selectedImageModel.selectedFolder;
+                      String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];// String? folder = selectedImageModel.selectedFolder;
                       String image1 = 'assets/images/$folder/${folder}광질1.png';
                       String image2 = 'assets/images/$folder/${folder}광질2.png';
                       double imageSize = timerModel.isAnimating ? 250.0 : 200.0;
@@ -95,15 +98,13 @@ class _TimerGamePageState extends State<TimerGamePage> {
     );
   }
 
+  // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('MM.dd.EEE').format(now);
-
     return Text(
-      formattedDate,
+      widget.title, // title로 변경
       style: TextStyle(
         color: TIMER_COLOR,
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     );

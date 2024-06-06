@@ -47,12 +47,28 @@ class TimerModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 원본 캐릭터 이미지 저장
+  void setOriginalImage(String imagePath) {
+    originalImage = imagePath;
+    notifyListeners();
+  }
+
   // context를 저장할 변수
   void setContext(BuildContext context) {
     _context = context;
     // context를 설정할 때 SelectedImageModel에서 선택된 이미지를 가져옵니다.
     final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
-    setOriginalImage(selectedImageModel.selectedImage!);
+    if (selectedImageModel.selectedImage != null) {
+      setOriginalImage(selectedImageModel.selectedImage!);
+    }
+  }
+
+  // todocard의 타이머 시간
+  void setDurationFromToDoCard(int durationSeconds) {
+    maxSeconds = durationSeconds;
+    seconds = durationSeconds;
+    elapsedSeconds = 0; // 경과 시간을 초기화
+    notifyListeners();
   }
 
   // 타이머 시작
@@ -127,7 +143,7 @@ class TimerModel extends ChangeNotifier {
   void changeImageOnTimerEnd() {
     if (_context != null) {
       final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
-      String? folder = selectedImageModel.selectedFolder;
+      String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
 
       if (folder != null) {
         gemImage1 = 'assets/images/$folder/${folder}보석1.png';
@@ -185,11 +201,14 @@ class TimerModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 원본 캐릭터 이미지 저장
-  void setOriginalImage(String imagePath) {
-    originalImage = imagePath;
+  void resetToOriginalImage() {
+    modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
+    stoneImage = 'assets/images/stone1.png'; // 돌 이미지를 초기 상태로 복원
+    isGemAnimating = false; // 보석 애니메이션 정지
+    _gemAnimationTimer?.cancel(); // 보석 애니메이션 타이머 정지
     notifyListeners();
   }
+
 
   String? getCurrentImage() {
     return modifiedImage ?? originalImage;
@@ -207,7 +226,7 @@ class TimerModel extends ChangeNotifier {
 
       overlay?.insert(overlayEntry);
 
-      Future.delayed(Duration(seconds: 10), () {
+      Future.delayed(Duration(seconds: 3), () {
         overlayEntry.remove();
       });
     }
