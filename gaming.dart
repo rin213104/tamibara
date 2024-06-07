@@ -32,7 +32,7 @@ class CharacterScreen extends StatefulWidget {
   _CharacterScreenState createState() => _CharacterScreenState();
 }
 
-class _CharacterScreenState extends State<CharacterScreen> {
+class _CharacterScreenState extends State<CharacterScreen> with TickerProviderStateMixin {
   String _currentCharacter = '카돌';
   String _currentCharacterImage = 'assets/images/카돌알.png';
   String _currentSentence = '안녕!';
@@ -90,9 +90,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 0, 'intimacy': 30, 'stage': 0, 'totalGrowth': 0},
-    '곰돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': 0},
-    '냥돌': {'growth': 0, 'intimacy': 70, 'stage': 0, 'totalGrowth': 0},
+    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
+    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
+    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
   };
 
   final Map<int, int> _growthRequirements = {
@@ -138,6 +138,25 @@ class _CharacterScreenState extends State<CharacterScreen> {
     setState(() {
       _showCharacterStats = !_showCharacterStats;
       _showCharacterSelection = false; // 캐릭터 상태창이 열릴 때 캐릭터 선택창을 닫음
+    });
+  }
+
+  void _showHeartAnimation(BuildContext context) {
+    final RenderBox buttonRenderBox = context.findRenderObject() as RenderBox;
+    final buttonPosition = buttonRenderBox.localToGlobal(Offset.zero);
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: buttonPosition.dy - 50,
+        left: buttonPosition.dx + buttonRenderBox.size.width / 2 - 25,
+        child: HeartAnimation(),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(Duration(seconds: 2), () {
+      overlayEntry.remove();
     });
   }
 
@@ -203,11 +222,14 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   SizedBox(
                     width: 200,
                     child: _buildLinearProgressIndicator(),
+
                   ),
                   SizedBox(height: 10),
+
                   Text(
                     '${(_characterStats[_currentCharacter]!['growth']! / _growthRequirements[_characterStats[_currentCharacter]!['stage']!]! * 100).toStringAsFixed(2)}%',
                     style: TextStyle(fontSize: 12),
+
                   ),
                 ],
               ),
@@ -217,23 +239,29 @@ class _CharacterScreenState extends State<CharacterScreen> {
             color: _showCharacterSelection || _showCharacterStats ? Colors.white : Colors.transparent,
             child: Column(
               children: [
-                SizedBox(height: 20), // 버튼 위에 빈 공간 추가
+                if (_showCharacterSelection || _showCharacterStats)
+                  SizedBox(height: 30), //a지점
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildCircleButton('assets/images/love.png', () {}),
+                    Builder(
+                      builder: (context) => _buildCircleButton('assets/images/love.png', () => _showHeartAnimation(context)),
+                    ),
                     _buildCircleButton('assets/images/chara.png', _toggleCharacterSelection),
                     _buildCircleButton('assets/images/plus.png', _toggleCharacterStats),
+
                   ],
+
                 ),
-                SizedBox(height: 10), // Add spacing between buttons and below area
+                if (!(_showCharacterSelection || _showCharacterStats))
+                  SizedBox(height: 30),//b지점
               ],
             ),
           ),
           _showCharacterSelection || _showCharacterStats
               ? Flexible(
             child: FractionallySizedBox(
-              heightFactor: 1.0,
+              heightFactor: 1,
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 color: Colors.white,
@@ -379,7 +407,7 @@ class CharacterSelectionScreen extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        SizedBox(height: 10),
+        //SizedBox(height: 100),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -507,7 +535,7 @@ class CharacterStatsScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: MediaQuery.of(context).size.width, // 가득 채우기
+              width: 200,
               child: LinearProgressIndicator(
                 value: currentStage < 3 ? growth / requiredGrowth : totalGrowth / (totalGrowth + 1),
                 minHeight: 7,
@@ -526,6 +554,58 @@ class CharacterStatsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class HeartAnimation extends StatefulWidget {
+  @override
+  _HeartAnimationState createState() => _HeartAnimationState();
+}
+
+class _HeartAnimationState extends State<HeartAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0, end: -150).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _animation.value),
+          child: child,
+        );
+      },
+      child: Icon(
+        Icons.favorite,
+        color: Colors.red,
+        size: 50,
       ),
     );
   }
