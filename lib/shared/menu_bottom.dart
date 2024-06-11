@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:timer/screen/timerSetup.dart';
 import '../screen/to_do_list_screen.dart';
-import '../screen/profile.dart';
-import 'package:timer/screen/startSet_1.dart'; // startSet_1 화면 import 추가
+import '../screen/option.dart';
+import '../screen/gaming.dart';
 
 class MenuBottom extends StatelessWidget {
   const MenuBottom({
@@ -31,11 +31,19 @@ class MenuBottom extends StatelessWidget {
               ),
             );
             break;
+          case 2:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CharacterScreen(),
+              ),
+            );
+            break;
           case 3:
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => profile(),
+                builder: (context) => optionScreen(),
               ),
             );
             break;

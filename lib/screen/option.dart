@@ -1,7 +1,6 @@
-import '../screen/pushOnOff.dart';
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
-import '../screen/profile.dart';
+import 'profile.dart';
 
 class optionScreen extends StatelessWidget {
   final BoxDecoration _containerDecoration = BoxDecoration(

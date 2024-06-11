@@ -9,11 +9,9 @@ import '../widget/to_do_card.dart';
 
 class EditToDo extends StatefulWidget {
   ToDoCard todo;
-  //int idx;
 
   EditToDo({
     required this.todo,
-    //required this.idx,
     Key? key,
   }) : super(key: key);
 
@@ -57,56 +55,55 @@ class _setEditToDoState extends State<EditToDo> {
       ),
       backgroundColor: PRIMARY_COLOR,
       body: GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AddToDoBody(
-                        titleController: titleController,
-                        memoController: memoController,
-                      ),
-                      SizedBox(height: 20),
-                    ],
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AddToDoBody(
+                      titleController: titleController,
+                      memoController: memoController,
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              height: 50,
+              color: PRIMARY_COLOR, // 저장 버튼 높이 설정
+              child: TextButton(
+                onPressed: () {
+                  if (widget.todo.Title != titleController.text) widget.todo.Title = titleController.text;
+                  if (widget.todo.Title != ToDoData.selectedDate) widget.todo.Date = ToDoData.selectedDate;
+                  if (widget.todo.DurationTime != ToDoData.selectedDuration) widget.todo.DurationTime = ToDoData.selectedDuration;
+                  if (widget.todo.Memo != memoController.text) widget.todo.Memo = memoController.text;
+                  Navigator.pop(context, widget.todo); // 수정된 ToDoCard 객체 반환
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: PRIMARY_COLOR,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  '저장',
+                  style: TextStyle(
+                    color: TEXT_COLOR,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Container(
-                height: 50,
-                color: PRIMARY_COLOR,// 저장 버튼 높이 설정
-                child: TextButton(
-                  onPressed: () {
-                    if(widget.todo.Title != titleController.text)  widget.todo.Title = titleController.text;
-                    if(widget.todo.Title != ToDoData.selectedDate) widget.todo.Date = ToDoData.selectedDate;
-                    if(widget.todo.DurationTime != ToDoData.selectedDuration) widget.todo.DurationTime = ToDoData.selectedDuration;
-                    if(widget.todo.Memo != memoController.text) widget.todo.Memo = memoController.text;
-                    // print('ToDo: ${newToDo.Id}--------------${newToDo.Date}--------------${newToDo.DurationTime}');
-                    Navigator.pop(context, [widget.todo]);
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor: PRIMARY_COLOR,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    '저장',
-                    style: TextStyle(
-                      color: TEXT_COLOR,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -130,8 +127,9 @@ Widget AddToDoBody({
   );
 }
 
-class InputTitle extends StatelessWidget { // 목표 입력 필드
+class InputTitle extends StatelessWidget {
   final TextEditingController titleController;
+
   InputTitle({Key? key, required this.titleController}) : super(key: key);
 
   @override
@@ -149,9 +147,7 @@ class InputTitle extends StatelessWidget { // 목표 입력 필드
             ),
           ),
         ),
-
         SizedBox(height: 2.0),
-
         Padding(
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Divider(
@@ -159,9 +155,7 @@ class InputTitle extends StatelessWidget { // 목표 입력 필드
             color: TEXT_COLOR,
           ),
         ),
-
         SizedBox(height: 8.0),
-
         TextFormField(
           controller: titleController,
           maxLength: 20,
@@ -189,7 +183,6 @@ class InputTitle extends StatelessWidget { // 목표 입력 필드
   }
 }
 
-
 class InputMemo extends StatelessWidget {
   final TextEditingController memoController;
 
@@ -210,9 +203,7 @@ class InputMemo extends StatelessWidget {
             ),
           ),
         ),
-
         SizedBox(height: 2.0),
-
         Padding(
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Divider(
@@ -220,9 +211,7 @@ class InputMemo extends StatelessWidget {
             color: TEXT_COLOR,
           ),
         ),
-
         SizedBox(height: 8.0),
-
         TextFormField(
           controller: memoController,
           maxLength: 500,
@@ -234,7 +223,7 @@ class InputMemo extends StatelessWidget {
               color: Color(0xFFB1B1B1),
               fontSize: 16,
             ),
-            contentPadding: EdgeInsets.only(bottom:80, top:20, left:10),
+            contentPadding: EdgeInsets.only(bottom: 80, top: 20, left: 10),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(color: Colors.white, width: 2),

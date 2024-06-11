@@ -8,5 +8,5 @@ const PROGRESSBAR_COLOR = Color(0xFF5B9A90);
 const BUTTON_COLOR = Color(0xFF5B9A90);
 const TIMER_COLOR = Color(0xFF4D6058);
 
-// 프로팔
+// 프로필
 const CHARACTER_COLOR = Color(0xff5A715C);

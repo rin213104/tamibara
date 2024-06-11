@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
-import '../screen/welcome.dart';
+import 'welcome.dart';
 
 class CharacterDetail extends StatelessWidget {
   final String imagePath;

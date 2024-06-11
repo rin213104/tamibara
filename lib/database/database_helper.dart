@@ -27,9 +27,12 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      onCreate: (db, version) {
-        return db.execute(
+      onCreate: (db, version) async {
+        await db.execute(
           'CREATE TABLE todos(id TEXT PRIMARY KEY, title TEXT, date TEXT, durationTime INTEGER, memo TEXT, isChecked INTEGER)',
+        );
+        await db.execute(
+          'CREATE TABLE firstRunTable(id INTEGER PRIMARY KEY AUTOINCREMENT, firstRun INTEGER)',
         );
       },
       version: 1,
@@ -124,6 +127,24 @@ class DatabaseHelper {
         memo: maps[0]['memo'],
         isChecked: maps[0]['isChecked'] == 1,
       );
+    }
+    return null;
+  }
+
+  Future<int> insertFirstRun(int isFirstRun) async {
+    final db = await database;
+    final int result = await db.insert(
+      'firstRunTable',
+      {'firstRun': isFirstRun},
+    );
+    return result;
+  }
+
+  Future<int?> getFirstRun() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query('firstRunTable');
+    if (result.isNotEmpty) {
+      return result.first['firstRun'];
     }
     return null;
   }

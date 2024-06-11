@@ -9,7 +9,7 @@ import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
-import  '../screen/to_do_list_screen.dart';
+import  'to_do_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,13 +26,17 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerDigitalPage(),
+        home: TimerDigitalPage(title: 'Your Timer Title'),
       ),
     );
   }
 }
 
 class TimerDigitalPage extends StatefulWidget {
+
+  final String title;
+  TimerDigitalPage({required this.title}); // 생성자 수정
+
   @override
   _TimerDigitalPageState createState() => _TimerDigitalPageState();
 }
@@ -49,6 +53,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,20 +93,17 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
 
   // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('MM.dd.EEE').format(now);
-
     return Text(
-      formattedDate,
+      widget.title, // title로 변경
       style: TextStyle(
         color: TIMER_COLOR,
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
-  // 타이머 종료 시 이미지 변경 함수 호출
+  // 타이머 종료 시 이미지 변G경 함수 호출
   void onTimerEnd(BuildContext context) {
     final timerModel = Provider.of<TimerModel>(context, listen: false);
     final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
@@ -223,6 +225,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           });
         }
 
+        String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
+        String image1 = 'assets/images/$folder/${folder}달림1.png';
+        String image2 = 'assets/images/$folder/${folder}달림2.png';
+        double imageSize = timer.isAnimating ? 80.0 : 80.0;
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -236,9 +243,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
             ),
             SizedBox(height: 20),
             Image.asset(
-              timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
-              width: 80,
-              height: 80,
+              timer.isAnimating
+                  ? (timer.isFirstImage ? image1 : image2)
+                  : timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png', // 캐릭터 이미지
+              width: imageSize,
+              height: imageSize,
             ),
             SizedBox(height: 30),
             SizedBox(
@@ -256,7 +265,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
-  // 페이지 2/2 표시
+  // 페이지 2/3 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -276,6 +285,15 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFAFCBBF),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
           ),
         ),
       ],

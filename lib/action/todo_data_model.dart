@@ -38,4 +38,3 @@ class ToDoDataModel extends ChangeNotifier {
    */
 
 }
-

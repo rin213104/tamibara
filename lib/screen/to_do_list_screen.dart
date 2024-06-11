@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import '../action/gaming_data_model.dart';
 import '../widget/to_do_card.dart';
 import '../const/colors.dart';
-import '../screen/add_to_do_screen.dart';
-import '../screen/edit_to_do_screen.dart';
+import 'add_to_do_screen.dart';
+import 'edit_to_do_screen.dart';
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../action/todo_data_model.dart';
 import '../widget/customToast.dart'; // 토스트 메시지
 import 'dart:math'; // 랜덤 메시지를 위해 추가
 import '../database/database_helper.dart'; // 데이터베이스 헬퍼 추가
+import '../action/timerSlide.dart';  // todocard 선택시 타이머 이동
+import '../action/timerModel.dart';
+
 
 class ToDoScreen extends StatefulWidget {
   final List<ToDoCard> ToDoList = [];
@@ -54,6 +57,18 @@ class _setToDoScreenState extends State<ToDoScreen> {
         onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
         onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
         onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+        onTap: () {  // todocard 선택시 타이머 이동
+          final timerModel = Provider.of<TimerModel>(context, listen: false);
+          timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+          timerModel.setDurationFromToDoCard(todo.durationTime);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => timerSlideExample(todoTitle: todo.title),
+            ),
+          );
+        },
       )));
     });
   }
@@ -76,27 +91,28 @@ class _setToDoScreenState extends State<ToDoScreen> {
    */
 
   void _handleToDoChecked(bool isChecked, int index) {
-    setState(() {
-      widget.ToDoList[index].isChecked = isChecked; // 상태 업데이트
-    });
+    // 체크 상태가 변경된 후 데이터베이스 업데이트
     if (isChecked) {
-      Future.delayed(Duration(milliseconds: 100), () { // 상태 업데이트 후 약간의 딜레이를 줌
+      dbHelper.deleteTodo(widget.ToDoList[index].Id).then((_) {
         setState(() {
-          dbHelper.deleteTodo(widget.ToDoList[index].Id); // 데이터베이스에서 할 일 삭제
           widget.ToDoList.removeAt(index);
+          _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
+          Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
         });
-        _showRandomToast();  // 체크박스 상태 변경 시 랜덤 메시지 출력
-        Provider.of<GamingDataModel>(context, listen: false).increaseCheckedEXP();  // 체크 박스 상태 변경 시 경험치 증가
       });
     } else {
-      dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
+      dbHelper.updateTodo(Todo(
         id: widget.ToDoList[index].Id,
         title: widget.ToDoList[index].Title,
         date: widget.ToDoList[index].Date,
         durationTime: widget.ToDoList[index].DurationTime,
         memo: widget.ToDoList[index].Memo,
         isChecked: isChecked,
-      ));
+      )).then((_) {
+        setState(() {
+          widget.ToDoList[index].isChecked = isChecked;
+        });
+      });
     }
   }
 
@@ -122,12 +138,12 @@ class _setToDoScreenState extends State<ToDoScreen> {
         widget.ToDoList.sort((a, b) => a.Date.compareTo(b.Date));
       });
       dbHelper.updateTodo(Todo( // 데이터베이스에서 할 일 업데이트
-        id: widget.ToDoList[index].Id,
-        title: widget.ToDoList[index].Title,
-        date: widget.ToDoList[index].Date,
-        durationTime: widget.ToDoList[index].DurationTime,
-        memo: widget.ToDoList[index].Memo,
-        isChecked: widget.ToDoList[index].isChecked,
+        id: updatedToDo.Id,
+        title: updatedToDo.Title,
+        date: updatedToDo.Date,
+        durationTime: updatedToDo.DurationTime,
+        memo: updatedToDo.Memo,
+        isChecked: updatedToDo.isChecked,
       ));
     }
   }
@@ -168,6 +184,18 @@ class _setToDoScreenState extends State<ToDoScreen> {
                   onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
                   onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
                   onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+                  onTap: () {  // todocard 선택시 타이머 이동
+                    final timerModel = Provider.of<TimerModel>(context, listen: false);
+                    timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+                    timerModel.setDurationFromToDoCard(todo.durationTime);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => timerSlideExample(todoTitle: todo.title),
+                      ),
+                    );
+                  },
                 )));
                 return ListView.builder(
                   itemCount: widget.ToDoList.length,
@@ -194,6 +222,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
                           SizedBox(height: 10),
                         ],
                         ToDoCard(
+                          key: ValueKey(widget.ToDoList[index].Id), // 고유 키 추가
                           Id: widget.ToDoList[index].Id,
                           Title: widget.ToDoList[index].Title,
                           Date: widget.ToDoList[index].Date,
@@ -204,6 +233,20 @@ class _setToDoScreenState extends State<ToDoScreen> {
                           onCancel: () => _ToDoDelete(index),
                           onEdit: () {
                             _ToDoEdit(index);
+                          },
+                          onTap: () {  // todocard 선택시 타이머 이동
+                            final todo = widget.ToDoList[index];  // todocard title 전달
+                            final timerModel = Provider.of<TimerModel>(context, listen: false);
+                            timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+                            timerModel.setContext(context);
+                            timerModel.setDurationFromToDoCard(todo.DurationTime); // DurationTime으로 타이머 설정
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => timerSlideExample(todoTitle: todo.title),
+                              ),
+                            );
                           },
                         ),
                         SizedBox(height: 10),

@@ -9,7 +9,7 @@ import 'package:timer/widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
-import  '../screen/to_do_list_screen.dart';
+import 'to_do_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,13 +26,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TimerAnalogPage(), // 기본 이미지 경로 설정
+        home: TimerAnalogPage(title: 'Your Timer Title'), // 기본 이미지 경로 설정
       ),
     );
   }
 }
 
 class TimerAnalogPage extends StatefulWidget {
+  final String title;
+  TimerAnalogPage({required this.title});
+
   @override
   _TimerAnalogPageState createState() => _TimerAnalogPageState();
 }
@@ -88,14 +91,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
 
   // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('MM.dd.EEE').format(now);
-
     return Text(
-      formattedDate,
+      widget.title, // title로 변경
       style: TextStyle(
         color: TIMER_COLOR,
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -222,6 +222,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           });
         }
 
+        String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
+        String image1 = 'assets/images/$folder/${folder}달림1.png';
+        String image2 = 'assets/images/$folder/${folder}달림2.png';
+        double imageSize = timer.isAnimating ? 80.0 : 80.0;
+
         return SizedBox(
           width: 200,
           height: 200,
@@ -253,9 +258,11 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
                     ),
                     SizedBox(height: 5),
                     Image.asset(
-                      timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png',
-                      width: 80,
-                      height: 80,
+                      timer.isAnimating
+                          ? (timer.isFirstImage ? image1 : image2)
+                          : timer.getCurrentImage() ?? 'assets/images/capybara/카피바라성년.png',
+                      width: imageSize,
+                      height: imageSize,
                     ),
                   ],
                 ),
@@ -267,7 +274,7 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
     );
   }
 
-  // 페이지 1/2 표시
+  // 페이지 1/3 표시
   Widget buildDotsIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -278,6 +285,15 @@ class _TimerAnalogPageState extends State<TimerAnalogPage> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFAFCBBF),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
           ),
         ),
         const SizedBox(width: 8),
