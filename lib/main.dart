@@ -5,13 +5,13 @@ import 'package:timer/action/timerSlide.dart';
 import 'package:timer/screen/timerSetup.dart';
 import 'package:timer/screen/login.dart';
 import 'package:timer/action/selectedImageModel.dart';
-import 'screen/to_do_list_screen.dart';
+import '../screen/to_do_list_screen.dart';
 import 'action/todo_data_model.dart';
-import 'action/nickNameProvider.dart';
-import 'screen/welcome.dart';
+import '../action/nickNameProvider.dart';
+import '../screen/welcome.dart';
 import 'package:timer/action/gaming_data_model.dart';
-import 'action/selected_todo_model.dart';
-import 'database/database_helper.dart';
+import '../action/selected_todo_model.dart';
+import '../database/database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
