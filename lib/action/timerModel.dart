@@ -6,6 +6,9 @@ import 'gaming_data_model.dart';
 import 'package:provider/provider.dart';
 import '../widget/customToast.dart';
 import 'selectedImageModel.dart';
+import '../database/database_helper.dart';
+import '../screen/to_do_list_screen.dart';
+import '../action/gaming_data_model.dart';
 
 // 타이머 종료 시 토스트 알림 메시지 리스트
 List<String> toastMessages = [
@@ -34,11 +37,14 @@ class TimerModel extends ChangeNotifier {
   String stoneImage = 'assets/images/stone1.png'; // 바위 이미지 경로
   String? gemImage1; // 보석 이미지 1
   String? gemImage2; // 보석 이미지 2
+  String id = ''; // todocard id
 
   Timer? _timer;
   Timer? _animationTimer;
   Timer? _gemAnimationTimer; // 보석 애니메이션 타이머
   BuildContext? _context; // context를 저장할 변수
+
+  final DatabaseHelper dbHelper = DatabaseHelper(); // 데이터베이스 헬퍼 인스턴스 추가
 
   void setMaxSeconds(int newMaxSeconds) {
     maxSeconds = newMaxSeconds;
@@ -64,10 +70,11 @@ class TimerModel extends ChangeNotifier {
   }
 
   // todocard의 타이머 시간
-  void setDurationFromToDoCard(int durationSeconds) {
+  void setDurationFromToDoCard(int durationSeconds, String tempid) {
     maxSeconds = durationSeconds;
     seconds = durationSeconds;
     elapsedSeconds = 0; // 경과 시간을 초기화
+    id = tempid;
     notifyListeners();
   }
 
@@ -173,6 +180,12 @@ class TimerModel extends ChangeNotifier {
     }
   }
 
+  void _ToDoDelete() {
+    dbHelper.deleteTodo(id); // 데이터베이스에서 할 일 삭제
+    ToDoScreen().ToDoList.remove(id);
+    notifyListeners();
+  }
+
 
   // 타이머 종료 시
   void onTimerEnd() {
@@ -182,6 +195,8 @@ class TimerModel extends ChangeNotifier {
     if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
+      _ToDoDelete(); // 투두 삭제
+      Provider.of<GamingDataModel>(_context!, listen: false).increaseCheckedEXP(); // 경험치 증가
     }
 
     // notifyListeners();
