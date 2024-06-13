@@ -13,25 +13,9 @@ class GamingDataModel extends ChangeNotifier {
     loadExperience();
   }
 
-
-
-  /*
-  @override
-  void initState() {
-    _loadExperience(); // initState에서 경험치를 로드합니다.
-  }
-
-   */
-
   Future<void> loadExperience() async {
     _EXP = await _experienceStorage.getExperience();
     notifyListeners();
-  }
-
-  Future<double> _initExperience() async {
-    _EXP = await _experienceStorage.getExperience();
-    notifyListeners();
-    return _EXP;
   }
 
   Future<void> _saveExperience() async {
