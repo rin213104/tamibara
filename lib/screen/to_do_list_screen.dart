@@ -60,7 +60,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
         onTap: () {  // todocard 선택시 타이머 이동
           final timerModel = Provider.of<TimerModel>(context, listen: false);
           timerModel.resetToOriginalImage(); // 이미지를 초기 상태
-          timerModel.setDurationFromToDoCard(todo.durationTime);
+          timerModel.setDurationFromToDoCard(todo.durationTime, todo.id);
 
           Navigator.push(
             context,
@@ -187,7 +187,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
                   onTap: () {  // todocard 선택시 타이머 이동
                     final timerModel = Provider.of<TimerModel>(context, listen: false);
                     timerModel.resetToOriginalImage(); // 이미지를 초기 상태
-                    timerModel.setDurationFromToDoCard(todo.durationTime);
+                    timerModel.setDurationFromToDoCard(todo.durationTime, todo.id);
 
                     Navigator.push(
                       context,
@@ -239,7 +239,7 @@ class _setToDoScreenState extends State<ToDoScreen> {
                             final timerModel = Provider.of<TimerModel>(context, listen: false);
                             timerModel.resetToOriginalImage(); // 이미지를 초기 상태
                             timerModel.setContext(context);
-                            timerModel.setDurationFromToDoCard(todo.DurationTime); // DurationTime으로 타이머 설정
+                            timerModel.setDurationFromToDoCard(todo.DurationTime, todo.Id); // DurationTime으로 타이머 설정
 
                             Navigator.push(
                               context,
