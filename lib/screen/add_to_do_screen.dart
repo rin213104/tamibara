@@ -5,6 +5,10 @@ import '../widget/set_to_do_date.dart';
 import '../widget/set_to_do_time.dart';
 import '../widget/to_do_card.dart';
 import '../action/todo_data_model.dart';
+<<<<<<< HEAD
+=======
+import '../action/timerSlide.dart';
+>>>>>>> origin/rin213104
 
 
 class AddToDo extends StatefulWidget {
@@ -73,8 +77,21 @@ class _setAddToDoState extends State<AddToDo> {
                     },
                     onCancel: () {setState(() {});},
                     onEdit: () {setState(() {});},
+<<<<<<< HEAD
                   );
                   print('ToDo: ${newToDo.Id}--------------${newToDo.Date}--------------${newToDo.DurationTime}');
+=======
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => timerSlideExample(todoTitle: titleController.text),
+                        ),
+                      );
+                    },
+                  );
+                  //print('ToDo: ${newToDo.Id}--------------${newToDo.Date}--------------${newToDo.DurationTime}');
+>>>>>>> origin/rin213104
                   Navigator.pop(context, [newToDo]);
                 },
                 style: TextButton.styleFrom(

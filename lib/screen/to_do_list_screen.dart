@@ -2,14 +2,25 @@ import 'package:flutter/material.dart';
 import '../action/gaming_data_model.dart';
 import '../widget/to_do_card.dart';
 import '../const/colors.dart';
+<<<<<<< HEAD
 import '../screen/add_to_do_screen.dart';
 import '../screen/edit_to_do_screen.dart';
+=======
+import 'add_to_do_screen.dart';
+import 'edit_to_do_screen.dart';
+>>>>>>> origin/rin213104
 import '../shared/menu_bottom.dart';
 import 'package:provider/provider.dart';
 import '../action/todo_data_model.dart';
 import '../widget/customToast.dart'; // 토스트 메시지
 import 'dart:math'; // 랜덤 메시지를 위해 추가
 import '../database/database_helper.dart'; // 데이터베이스 헬퍼 추가
+<<<<<<< HEAD
+=======
+import '../action/timerSlide.dart';  // todocard 선택시 타이머 이동
+import '../action/timerModel.dart';
+
+>>>>>>> origin/rin213104
 
 class ToDoScreen extends StatefulWidget {
   final List<ToDoCard> ToDoList = [];
@@ -54,6 +65,21 @@ class _setToDoScreenState extends State<ToDoScreen> {
         onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
         onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
         onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+<<<<<<< HEAD
+=======
+        onTap: () {  // todocard 선택시 타이머 이동
+          final timerModel = Provider.of<TimerModel>(context, listen: false);
+          timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+          timerModel.setDurationFromToDoCard(todo.durationTime, todo.id);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => timerSlideExample(todoTitle: todo.title),
+            ),
+          );
+        },
+>>>>>>> origin/rin213104
       )));
     });
   }
@@ -169,6 +195,21 @@ class _setToDoScreenState extends State<ToDoScreen> {
                   onChecked: (isChecked) => _handleToDoChecked(isChecked, widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
                   onCancel: () => _ToDoDelete(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
                   onEdit: () => _ToDoEdit(widget.ToDoList.indexWhere((element) => element.Id == todo.id)),
+<<<<<<< HEAD
+=======
+                  onTap: () {  // todocard 선택시 타이머 이동
+                    final timerModel = Provider.of<TimerModel>(context, listen: false);
+                    timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+                    timerModel.setDurationFromToDoCard(todo.durationTime, todo.id);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => timerSlideExample(todoTitle: todo.title),
+                      ),
+                    );
+                  },
+>>>>>>> origin/rin213104
                 )));
                 return ListView.builder(
                   itemCount: widget.ToDoList.length,
@@ -207,6 +248,23 @@ class _setToDoScreenState extends State<ToDoScreen> {
                           onEdit: () {
                             _ToDoEdit(index);
                           },
+<<<<<<< HEAD
+=======
+                          onTap: () {  // todocard 선택시 타이머 이동
+                            final todo = widget.ToDoList[index];  // todocard title 전달
+                            final timerModel = Provider.of<TimerModel>(context, listen: false);
+                            timerModel.resetToOriginalImage(); // 이미지를 초기 상태
+                            timerModel.setContext(context);
+                            timerModel.setDurationFromToDoCard(todo.DurationTime, todo.Id); // DurationTime으로 타이머 설정
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => timerSlideExample(todoTitle: todo.title),
+                              ),
+                            );
+                          },
+>>>>>>> origin/rin213104
                         ),
                         SizedBox(height: 10),
                       ],

@@ -132,11 +132,24 @@ class _DateWheelPickerState extends State<DateWheelPicker> {
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
+=======
+    // initState에서 컨트롤러 초기화 제거
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+>>>>>>> origin/rin213104
     selectedYear = widget.initialDate.year;
     selectedMonth = widget.initialDate.month;
     selectedDay = widget.initialDate.day;
 
+<<<<<<< HEAD
     years = List.generate(10, (index) => selectedYear - 5 + index);
+=======
+    years = List.generate(5, (index) => selectedYear + index);
+>>>>>>> origin/rin213104
     _updateDays(selectedYear, selectedMonth);
 
     yearController = ScrollController(
@@ -150,6 +163,24 @@ class _DateWheelPickerState extends State<DateWheelPicker> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  @override
+  void didUpdateWidget(covariant DateWheelPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 위젯이 업데이트될 때 컨트롤러 값 갱신
+    _updateDayController();
+  }
+
+  void _updateDayController() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (dayController.hasClients) {
+        dayController.jumpTo((selectedDay - 1) * 30.0);
+      }
+    });
+  }
+
+>>>>>>> origin/rin213104
   void _updateDays(int year, int month) {
     days.clear();
     final daysInMonth = DateTime(year, month + 1, 0).day;
@@ -158,6 +189,7 @@ class _DateWheelPickerState extends State<DateWheelPicker> {
       if (selectedDay > daysInMonth) {
         selectedDay = daysInMonth;
       }
+<<<<<<< HEAD
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         if (dayController.hasClients) {
           dayController.jumpTo((selectedDay - 1) * 30.0);
@@ -166,6 +198,13 @@ class _DateWheelPickerState extends State<DateWheelPicker> {
     });
   }
 
+=======
+      _updateDayController(); // _updateDays 호출 후에 dayController 업데이트
+    });
+  }
+
+
+>>>>>>> origin/rin213104
   @override
   Widget build(BuildContext context) {
     return Align(

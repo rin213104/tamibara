@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import '../shared/menu_bottom.dart';
 import '../widget/button_widget.dart';
 import '../widget/gradient_widget.dart';
@@ -10,6 +11,15 @@ import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
 import  '../screen/to_do_list_screen.dart';
+=======
+import 'package:timer/shared/menu_bottom.dart';
+import 'package:timer/widget/button_widget.dart';
+import 'package:timer/widget/gradient_widget.dart';
+import '../action/timerModel.dart'; // TimerModel 경로 확인
+import '../action/selectedImageModel.dart';
+import '../const/colors.dart';
+import  'to_do_list_screen.dart';
+>>>>>>> origin/rin213104
 
 void main() {
   runApp(const MyApp());
@@ -26,13 +36,24 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+<<<<<<< HEAD
         home: TimerDigitalPage(),
+=======
+        home: TimerDigitalPage(title: 'Your Timer Title'),
+>>>>>>> origin/rin213104
       ),
     );
   }
 }
 
 class TimerDigitalPage extends StatefulWidget {
+<<<<<<< HEAD
+=======
+
+  final String title;
+  TimerDigitalPage({required this.title}); // 생성자 수정
+
+>>>>>>> origin/rin213104
   @override
   _TimerDigitalPageState createState() => _TimerDigitalPageState();
 }
@@ -89,6 +110,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
 
   // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
+<<<<<<< HEAD
     final now = DateTime.now();
     final formattedDate = DateFormat('MM.dd.EEE').format(now);
 
@@ -97,12 +119,23 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
       style: TextStyle(
         color: TIMER_COLOR,
         fontSize: 18,
+=======
+    return Text(
+      widget.title, // title로 변경
+      style: TextStyle(
+        color: TIMER_COLOR,
+        fontSize: 20,
+>>>>>>> origin/rin213104
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
+<<<<<<< HEAD
   // 타이머 종료 시 이미지 변경 함수 호출
+=======
+  // 타이머 종료 시 이미지 변G경 함수 호출
+>>>>>>> origin/rin213104
   void onTimerEnd(BuildContext context) {
     final timerModel = Provider.of<TimerModel>(context, listen: false);
     final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
@@ -224,7 +257,11 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           });
         }
 
+<<<<<<< HEAD
         String? folder = selectedImageModel.selectedFolder;
+=======
+        String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
+>>>>>>> origin/rin213104
         String image1 = 'assets/images/$folder/${folder}달림1.png';
         String image2 = 'assets/images/$folder/${folder}달림2.png';
         double imageSize = timer.isAnimating ? 80.0 : 80.0;

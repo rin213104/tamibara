@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
+<<<<<<< HEAD
 import '../screen/profile.dart';
+=======
+import 'profile.dart';
+>>>>>>> origin/rin213104
 
 class optionScreen extends StatelessWidget {
   final BoxDecoration _containerDecoration = BoxDecoration(

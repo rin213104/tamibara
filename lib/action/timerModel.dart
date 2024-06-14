@@ -2,10 +2,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
+<<<<<<< HEAD
 import '../action/gaming_data_model.dart';
 import 'package:provider/provider.dart';
 import '../widget/customToast.dart';
 import '../action/selectedImageModel.dart';
+=======
+import 'gaming_data_model.dart';
+import 'package:provider/provider.dart';
+import '../widget/customToast.dart';
+import 'selectedImageModel.dart';
+import '../database/database_helper.dart';
+import '../screen/to_do_list_screen.dart';
+import '../action/gaming_data_model.dart';
+>>>>>>> origin/rin213104
 
 // 타이머 종료 시 토스트 알림 메시지 리스트
 List<String> toastMessages = [
@@ -34,12 +44,21 @@ class TimerModel extends ChangeNotifier {
   String stoneImage = 'assets/images/stone1.png'; // 바위 이미지 경로
   String? gemImage1; // 보석 이미지 1
   String? gemImage2; // 보석 이미지 2
+<<<<<<< HEAD
+=======
+  String id = ''; // todocard id
+>>>>>>> origin/rin213104
 
   Timer? _timer;
   Timer? _animationTimer;
   Timer? _gemAnimationTimer; // 보석 애니메이션 타이머
   BuildContext? _context; // context를 저장할 변수
 
+<<<<<<< HEAD
+=======
+  final DatabaseHelper dbHelper = DatabaseHelper(); // 데이터베이스 헬퍼 인스턴스 추가
+
+>>>>>>> origin/rin213104
   void setMaxSeconds(int newMaxSeconds) {
     maxSeconds = newMaxSeconds;
     seconds = newMaxSeconds;
@@ -47,12 +66,36 @@ class TimerModel extends ChangeNotifier {
     notifyListeners();
   }
 
+<<<<<<< HEAD
+=======
+  // 원본 캐릭터 이미지 저장
+  void setOriginalImage(String imagePath) {
+    originalImage = imagePath;
+    notifyListeners();
+  }
+
+>>>>>>> origin/rin213104
   // context를 저장할 변수
   void setContext(BuildContext context) {
     _context = context;
     // context를 설정할 때 SelectedImageModel에서 선택된 이미지를 가져옵니다.
     final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
+<<<<<<< HEAD
     setOriginalImage(selectedImageModel.selectedImage!);
+=======
+    if (selectedImageModel.selectedImage != null) {
+      setOriginalImage(selectedImageModel.selectedImage!);
+    }
+  }
+
+  // todocard의 타이머 시간
+  void setDurationFromToDoCard(int durationSeconds, String tempid) {
+    maxSeconds = durationSeconds;
+    seconds = durationSeconds;
+    elapsedSeconds = 0; // 경과 시간을 초기화
+    id = tempid;
+    notifyListeners();
+>>>>>>> origin/rin213104
   }
 
   // 타이머 시작
@@ -127,7 +170,11 @@ class TimerModel extends ChangeNotifier {
   void changeImageOnTimerEnd() {
     if (_context != null) {
       final selectedImageModel = Provider.of<SelectedImageModel>(_context!, listen: false);
+<<<<<<< HEAD
       String? folder = selectedImageModel.selectedFolder;
+=======
+      String? folder = selectedImageModel.selectedFolder ?? selectedImageModel.selectedImage?.split('/')[2];
+>>>>>>> origin/rin213104
 
       if (folder != null) {
         gemImage1 = 'assets/images/$folder/${folder}보석1.png';
@@ -157,6 +204,15 @@ class TimerModel extends ChangeNotifier {
     }
   }
 
+<<<<<<< HEAD
+=======
+  void _ToDoDelete() {
+    dbHelper.deleteTodo(id); // 데이터베이스에서 할 일 삭제
+    ToDoScreen().ToDoList.remove(id);
+    notifyListeners();
+  }
+
+>>>>>>> origin/rin213104
 
   // 타이머 종료 시
   void onTimerEnd() {
@@ -166,6 +222,11 @@ class TimerModel extends ChangeNotifier {
     if (!_timer!.isActive) { // 타이머가 이미 종료되었는지 확인
       changeImageOnTimerEnd();    // 타이머 완료 이미지 변경
       showRandomToastMessage();   // 토스트 알림
+<<<<<<< HEAD
+=======
+      _ToDoDelete(); // 투두 삭제
+      Provider.of<GamingDataModel>(_context!, listen: false).increaseCheckedEXP(); // 경험치 증가
+>>>>>>> origin/rin213104
     }
 
     // notifyListeners();
@@ -185,12 +246,24 @@ class TimerModel extends ChangeNotifier {
     notifyListeners();
   }
 
+<<<<<<< HEAD
   // 원본 캐릭터 이미지 저장
   void setOriginalImage(String imagePath) {
     originalImage = imagePath;
     notifyListeners();
   }
 
+=======
+  void resetToOriginalImage() {
+    modifiedImage = originalImage; // modifiedImage를 originalImage로 복원
+    stoneImage = 'assets/images/stone1.png'; // 돌 이미지를 초기 상태로 복원
+    isGemAnimating = false; // 보석 애니메이션 정지
+    _gemAnimationTimer?.cancel(); // 보석 애니메이션 타이머 정지
+    notifyListeners();
+  }
+
+
+>>>>>>> origin/rin213104
   String? getCurrentImage() {
     return modifiedImage ?? originalImage;
   }
@@ -207,9 +280,17 @@ class TimerModel extends ChangeNotifier {
 
       overlay?.insert(overlayEntry);
 
+<<<<<<< HEAD
       Future.delayed(Duration(seconds: 10), () {
+=======
+      Future.delayed(Duration(seconds: 3), () {
+>>>>>>> origin/rin213104
         overlayEntry.remove();
       });
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/rin213104

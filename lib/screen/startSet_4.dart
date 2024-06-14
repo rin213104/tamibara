@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
+<<<<<<< HEAD
 import '../screen/welcome.dart';
+=======
+import 'welcome.dart';
+>>>>>>> origin/rin213104
 
 class CharacterDetail extends StatelessWidget {
   final String imagePath;
