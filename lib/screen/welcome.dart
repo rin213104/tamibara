@@ -50,7 +50,7 @@ class WelcomeScreen extends StatelessWidget {
                     SizedBox(height: screenHeight * 0.1),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ToDoScreen(),

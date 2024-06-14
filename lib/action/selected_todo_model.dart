@@ -9,8 +9,5 @@ class SelectedTodoModel with ChangeNotifier {
     _selectedTodoTitle = title;
     notifyListeners();
   }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> origin/rin213104

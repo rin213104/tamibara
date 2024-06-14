@@ -2,30 +2,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-<<<<<<< HEAD
 import '../shared/menu_bottom.dart';
-=======
-import 'package:timer/shared/menu_bottom.dart';
->>>>>>> origin/rin213104
 import '../action/timerModel.dart';
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
 
 class TimerGamePage extends StatefulWidget {
-<<<<<<< HEAD
-=======
   final String title;
   TimerGamePage({required this.title}); // 생성자 수정
 
->>>>>>> origin/rin213104
   @override
   _TimerGamePageState createState() => _TimerGamePageState();
 }
 
 class _TimerGamePageState extends State<TimerGamePage> {
   @override
-<<<<<<< HEAD
-=======
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -38,7 +29,6 @@ class _TimerGamePageState extends State<TimerGamePage> {
   }
 
   @override
->>>>>>> origin/rin213104
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PRIMARY_COLOR,
@@ -50,29 +40,6 @@ class _TimerGamePageState extends State<TimerGamePage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-<<<<<<< HEAD
-                  Positioned(
-                    bottom: 160,
-                    child: Image.asset(
-                      'assets/images/stone.png',
-                      width: 300,
-                      height: 400,
-                    ),
-                  ),
-                  Consumer2<TimerModel, SelectedImageModel>(
-                    builder: (context, timerModel, selectedImageModel, child) {
-                      String? folder = selectedImageModel.selectedFolder;
-                      String image1 = 'assets/images/$folder/${folder}광질1.png';
-                      String image2 = 'assets/images/$folder/${folder}광질2.png';
-                      double imageSize = timerModel.isAnimating ? 250.0 : 200.0;
-                      return Positioned(
-                        right: 20,
-                        bottom: 140,
-                        child: Image.asset(
-                          timerModel.isAnimating
-                              ? (timerModel.isFirstImage ? image1 : image2)
-                              : timerModel.modifiedImage ?? selectedImageModel.selectedImage ?? 'assets/images/bear/곰돌기본채색.png',
-=======
                   Consumer<TimerModel>(
                     builder: (context, timerModel, child) {
                       return Positioned(
@@ -101,7 +68,6 @@ class _TimerGamePageState extends State<TimerGamePage> {
                               : (timerModel.isAnimating
                               ? (timerModel.isFirstImage ? image1 : image2)
                               : timerModel.modifiedImage ?? selectedImageModel.selectedImage ?? 'assets/images/bear/곰돌기본채색.png'),
->>>>>>> origin/rin213104
                           width: imageSize,
                           height: imageSize,
                         ),
@@ -132,17 +98,6 @@ class _TimerGamePageState extends State<TimerGamePage> {
     );
   }
 
-<<<<<<< HEAD
-  Widget buildDateText() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('MM.dd.EEE').format(now);
-
-    return Text(
-      formattedDate,
-      style: TextStyle(
-        color: TIMER_COLOR,
-        fontSize: 18,
-=======
   // 타이머 날짜 -> 타이머 목표 타이틀
   Widget buildDateText() {
     return Text(
@@ -150,7 +105,6 @@ class _TimerGamePageState extends State<TimerGamePage> {
       style: TextStyle(
         color: TIMER_COLOR,
         fontSize: 20,
->>>>>>> origin/rin213104
         fontWeight: FontWeight.bold,
       ),
     );

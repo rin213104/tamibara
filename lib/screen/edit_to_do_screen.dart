@@ -239,8 +239,4 @@ class InputMemo extends StatelessWidget {
       ],
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/rin213104

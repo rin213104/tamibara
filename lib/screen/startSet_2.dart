@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import '../screen/startSet_3.dart';
-=======
 import 'startSet_3.dart';
->>>>>>> origin/rin213104
 import '../const/colors.dart';
 
 void main() {

@@ -5,15 +5,11 @@ import '../screen/timerGame.dart';
 
 // 타이머 슬라이드: timerAnalog, timerDigital 페이지 이동
 class timerSlideExample extends StatefulWidget {
-<<<<<<< HEAD
-  final String? selectedImage;
-  timerSlideExample({this.selectedImage});
-=======
   final String todoTitle;
   timerSlideExample({required this.todoTitle});
   // final String? selectedImage;
   // timerSlideExample({this.selectedImage});
->>>>>>> origin/rin213104
+
 
   @override
   timerSlideExampleState createState() => timerSlideExampleState();  // 페이지 컨트롤러 설정
@@ -28,15 +24,9 @@ class timerSlideExampleState extends State<timerSlideExample> {
       body: PageView(
         controller: _pageController,
         children: [
-<<<<<<< HEAD
-          TimerAnalogPage(),  // 아날로그 타이머 페이지
-          TimerDigitalPage(), // 디지털 타이머 페이지
-          TimerGamePage()     // 타이머 게임 페이지
-=======
           TimerAnalogPage(title: widget.todoTitle),  // 아날로그 타이머 페이지
           TimerDigitalPage(title: widget.todoTitle), // 디지털 타이머 페이지
           TimerGamePage(title: widget.todoTitle)     // 타이머 게임 페이지
->>>>>>> origin/rin213104
         ],
       ),
     );

@@ -129,15 +129,6 @@ packages:
     source: hosted
     version: "8.2.5"
   intl:
-<<<<<<< HEAD
-    dependency: "direct main"
-    description:
-      name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.0"
-=======
     dependency: "direct dev"
     description:
       name: intl
@@ -145,7 +136,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.17.0"
->>>>>>> origin/rin213104
   leak_tracker:
     dependency: transitive
     description:
@@ -480,9 +470,5 @@ packages:
     source: hosted
     version: "1.0.4"
 sdks:
-<<<<<<< HEAD
-  dart: ">=3.3.4 <4.0.0"
-=======
   dart: ">=3.3.3 <4.0.0"
->>>>>>> origin/rin213104
   flutter: ">=3.19.0"

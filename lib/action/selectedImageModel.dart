@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
-<<<<<<< HEAD
-=======
 import 'package:shared_preferences/shared_preferences.dart';
->>>>>>> origin/rin213104
 
 // 선택된 캐릭터 저장
 class SelectedImageModel extends ChangeNotifier {
@@ -15,8 +12,6 @@ class SelectedImageModel extends ChangeNotifier {
   void setSelectedImage(String image) {
     _selectedImage = image;
     _selectedFolder = image.split('/')[2]; // 상위 폴더 경로 저장
-<<<<<<< HEAD
-=======
     saveSelectedImage(image, _selectedFolder!); // 이미지 저장
     notifyListeners();
   }
@@ -41,7 +36,6 @@ class SelectedImageModel extends ChangeNotifier {
   Future<void> initializeSelectedImage() async {
     _selectedImage = await getSelectedImage();
     _selectedFolder = await getSelectedFolder();
->>>>>>> origin/rin213104
     notifyListeners();
   }
 }

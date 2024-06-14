@@ -27,12 +27,6 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-<<<<<<< HEAD
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE todos(id TEXT PRIMARY KEY, title TEXT, date TEXT, durationTime INTEGER, memo TEXT, isChecked INTEGER)',
-        );
-=======
       onCreate: (db, version) async {
         await db.execute(
           'CREATE TABLE todos(id TEXT PRIMARY KEY, title TEXT, date TEXT, durationTime INTEGER, memo TEXT, isChecked INTEGER)',
@@ -40,7 +34,6 @@ class DatabaseHelper {
         await db.execute(
           'CREATE TABLE firstRunTable(id INTEGER PRIMARY KEY AUTOINCREMENT, firstRun INTEGER)',
         );
->>>>>>> origin/rin213104
       },
       version: 1,
     );
@@ -138,8 +131,6 @@ class DatabaseHelper {
     return null;
   }
 
-<<<<<<< HEAD
-=======
   Future<int> insertFirstRun(int isFirstRun) async {
     final db = await database;
     final int result = await db.insert(
@@ -158,7 +149,6 @@ class DatabaseHelper {
     return null;
   }
 
->>>>>>> origin/rin213104
   void _updateStream() async {
     final currentTodos = await todos();
     _todoStreamController.add(currentTodos);

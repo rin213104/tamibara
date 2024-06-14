@@ -34,8 +34,4 @@ class customToast extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/rin213104

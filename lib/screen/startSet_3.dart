@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import '../screen/startSet_4.dart';
-=======
 import 'startSet_4.dart';
->>>>>>> origin/rin213104
 import '../const/colors.dart';
 import '../action/selectedImageModel.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +90,7 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
     return GestureDetector(
       onTap: () {
         Provider.of<SelectedImageModel>(context, listen: false).setSelectedImage(imagePath);
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => CharacterDetail(imagePath: imagePath, description: description),
@@ -111,8 +107,5 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/rin213104
+

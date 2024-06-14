@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: screenHeight * 0.06,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => CharacterSelect(), // startSet_1 화면으로 전환

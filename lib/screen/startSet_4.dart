@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import '../const/colors.dart';
-<<<<<<< HEAD
-import '../screen/welcome.dart';
-=======
 import 'welcome.dart';
->>>>>>> origin/rin213104
 
 class CharacterDetail extends StatelessWidget {
   final String imagePath;
@@ -89,7 +85,7 @@ class CharacterDetail extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation, secondaryAnimation) => WelcomeScreen(selectedImage: imagePath),
