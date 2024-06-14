@@ -56,13 +56,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: isFirstRun ? '/' : '/todolist',
+      initialRoute: '/',
       routes: {
-        '/': (context) => LoginScreen(),
+        '/': (context) => isFirstRun ? LoginScreen() : ToDoScreen(),
         '/todolist': (context) => ToDoScreen(),
         '/timerSetup': (context) => TimerSetup(),
         '/timerSlide': (context) => timerSlideExample(todoTitle: '기본 타이머'),
         '/welcomeScreen': (context) => WelcomeScreen(selectedImage: selectedImageModel.selectedImage ?? 'assets/images/capybara/카피바라성년'),
+      },
+      builder: (context, child) {
+        if (!isFirstRun) {
+          Future.microtask(() {
+            Navigator.pushReplacementNamed(context, '/todolist');
+          });
+        }
+        return child!;
       },
     );
   }
