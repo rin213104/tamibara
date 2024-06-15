@@ -85,7 +85,7 @@ class CharacterDetail extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation, secondaryAnimation) => WelcomeScreen(selectedImage: imagePath),

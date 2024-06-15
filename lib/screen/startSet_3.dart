@@ -90,7 +90,7 @@ class _CharacterSelectPageState extends State<CharacterSelectPage> {
     return GestureDetector(
       onTap: () {
         Provider.of<SelectedImageModel>(context, listen: false).setSelectedImage(imagePath);
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CharacterDetail(imagePath: imagePath, description: description),
