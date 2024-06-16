@@ -50,12 +50,11 @@ class WelcomeScreen extends StatelessWidget {
                     SizedBox(height: screenHeight * 0.1),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ToDoScreen(),
-                          ),
-                        );
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ToDoScreen()),
+                                (routes) => false);
                       },
                       child: Image.asset(
                         selectedImage,

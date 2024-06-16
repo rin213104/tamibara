@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/shared/menu_bottom.dart';
-import 'package:timer/widget/button_widget.dart';
-import 'package:timer/widget/gradient_widget.dart';
+import '../shared/menu_bottom.dart';
+import '../widget/button_widget.dart';
+import '../widget/gradient_widget.dart';
 import '../action/timerModel.dart'; // TimerModel 경로 확인
 import '../action/selectedImageModel.dart';
 import '../const/colors.dart';
@@ -103,7 +103,8 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
     );
   }
 
-  // 타이머 종료 시 이미지 변G경 함수 호출
+  // 타이머 종료 시 이미지 변경 함수 호출
+
   void onTimerEnd(BuildContext context) {
     final timerModel = Provider.of<TimerModel>(context, listen: false);
     final selectedImageModel = Provider.of<SelectedImageModel>(context, listen: false);
@@ -123,7 +124,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
           return ButtonWidget(
             text: '타이머 종료',
             onClicked: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ToDoScreen(),
@@ -178,7 +179,7 @@ class _TimerDigitalPageState extends State<TimerDigitalPage> {
                               }
                               timer.resetTimer();
                               Navigator.of(context).pop();
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ToDoScreen(),
