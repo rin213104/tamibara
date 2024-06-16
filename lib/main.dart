@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/action/timerModel.dart';
-import 'package:timer/action/timerSlide.dart';
-import 'package:timer/screen/timerSetup.dart';
-import 'package:timer/screen/login.dart';
-import 'package:timer/action/selectedImageModel.dart';
+import '../action/timerModel.dart';
+import '../action/timerSlide.dart';
+import '../screen/timerSetup.dart';
+import '../screen/login.dart';
+import '../action/selectedImageModel.dart';
 import '../screen/to_do_list_screen.dart';
 import 'action/todo_data_model.dart';
 import '../action/nickNameProvider.dart';
 import '../screen/welcome.dart';
-import 'package:timer/action/gaming_data_model.dart';
+import '../action/gaming_data_model.dart';
 import '../action/selected_todo_model.dart';
 import '../database/database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,13 +56,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: isFirstRun ? '/' : '/todolist',
+      initialRoute: '/',
       routes: {
-        '/': (context) => LoginScreen(),
+        '/': (context) => isFirstRun ? LoginScreen() : ToDoScreen(),
         '/todolist': (context) => ToDoScreen(),
         '/timerSetup': (context) => TimerSetup(),
         '/timerSlide': (context) => timerSlideExample(todoTitle: '기본 타이머'),
         '/welcomeScreen': (context) => WelcomeScreen(selectedImage: selectedImageModel.selectedImage ?? 'assets/images/capybara/카피바라성년'),
+      },
+      builder: (context, child) {
+        if (!isFirstRun) {
+          Future.microtask(() {
+            Navigator.pushReplacementNamed(context, '/todolist');
+          });
+        }
+        return child!;
       },
     );
   }
