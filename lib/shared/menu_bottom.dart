@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timer/screen/timerSetup.dart';
+import '../screen/timerSetup.dart';
 import '../screen/to_do_list_screen.dart';
 import '../screen/option.dart';
 import '../screen/gaming.dart';
@@ -24,7 +24,7 @@ class MenuBottom extends StatelessWidget {
             );
             break;
           case 1:
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ToDoScreen(),
