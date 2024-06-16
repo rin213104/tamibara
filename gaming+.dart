@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:untitled1/const/colors.dart'; // Ensure this import is correct and the file exists
+
 void main() {
   runApp(MyApp());
 }
@@ -25,17 +27,32 @@ class MyApp extends StatelessWidget {
   }
 }
 
+String _stageSuffix(int stage) {
+  switch (stage) {
+    case 0:
+      return '알';
+    case 1:
+      return '아기';
+    case 2:
+      return '어린이';
+    case 3:
+    default:
+      return '';
+  }
+}
+
 class CharacterScreen extends StatefulWidget {
   @override
   _CharacterScreenState createState() => _CharacterScreenState();
 }
 
-class _CharacterScreenState extends State<CharacterScreen> {
+class _CharacterScreenState extends State<CharacterScreen> with TickerProviderStateMixin {
   String _currentCharacter = '카돌';
   String _currentCharacterImage = 'assets/images/카돌알.png';
-  String _selectedButton = 'assets/images/카돌알.png';
-  bool _isCharacterSelection = true;
   String _currentSentence = '안녕!';
+
+  bool _showCharacterSelection = false;
+  bool _showCharacterStats = false;
 
   final Map<String, List<String>> _characterSentences = {
     '카돌': [
@@ -87,10 +104,17 @@ class _CharacterScreenState extends State<CharacterScreen> {
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 0, 'intimacy': 30, 'stage': 0, 'totalGrowth': -23000},
-    '곰돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
-    '냥돌': {'growth': 0, 'intimacy': 70, 'stage': 0, 'totalGrowth': -23000},
+    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
+    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
+    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
   };
+
+  final Map<int, int> _growthRequirements = {
+    0: 3600,
+    1: 7200,
+    2: 10800,
+  };
+
   void _increaseGrowth() {
     setState(() {
       final stats = _characterStats[_currentCharacter]!;
@@ -123,17 +147,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
       }
     });
   }
-  final Map<int, int> _growthRequirements = {
-    0: 3600,
-    1: 7200,
-    2: 10800,
-  };
 
   void _updateCharacterImage(String character, String newImagePath) {
     setState(() {
       _currentCharacter = character;
       _currentCharacterImage = newImagePath;
-      _selectedButton = newImagePath;
       _updateSentence();
     });
   }
@@ -156,70 +174,46 @@ class _CharacterScreenState extends State<CharacterScreen> {
     }
   }
 
-  void _showCharacterSelection() {
+  void _toggleCharacterSelection() {
     setState(() {
-      _isCharacterSelection = true;
+      _showCharacterSelection = !_showCharacterSelection;
+      _showCharacterStats = false; // 캐릭터 선택창이 열릴 때 캐릭터 상태창을 닫음
     });
   }
 
-  void _showCharacterStats() {
+  void _toggleCharacterStats() {
     setState(() {
-      _isCharacterSelection = false;
+      _showCharacterStats = !_showCharacterStats;
+      _showCharacterSelection = false; // 캐릭터 상태창이 열릴 때 캐릭터 선택창을 닫음
     });
   }
 
+  void _showHeartAnimation(BuildContext context) {
+    final RenderBox buttonRenderBox = context.findRenderObject() as RenderBox;
+    final buttonPosition = buttonRenderBox.localToGlobal(Offset.zero);
+    final overlay = Overlay.of(context);
+    final stats = _characterStats[_currentCharacter];
+    final totalGrowth = stats != null ? stats['totalGrowth']! : 0;
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: buttonPosition.dy - 50,
+        left: buttonPosition.dx + buttonRenderBox.size.width / 2 - 25,
+        child: HeartAnimation(),
+      ),
+    );
 
+    overlay.insert(overlayEntry);
 
-  String _stageSuffix(int stage) {
-    switch (stage) {
-      case 0:
-        return '알';
-      case 1:
-        return '아기';
-      case 2:
-        return '어린이';
-      case 3:
-      default:
-        return '';
-    }
-  }
-  Widget _buildLinearProgressIndicator(int currentStage, int growth, int requiredGrowth, int totalGrowth) {
-    if (currentStage < 3) {
-      return SizedBox(
-        width: 200,
-        child: LinearProgressIndicator(
-          value: growth / requiredGrowth,
-          minHeight: 7,
-          borderRadius: BorderRadius.circular(10),
-          backgroundColor: Color(0xFFAFCBBF),
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
-        ),
-      );
-    } else {
-      return SizedBox(
-        width: 200,
-        child: LinearProgressIndicator(
-          value: totalGrowth / (totalGrowth + 1),
-          minHeight: 7,
-          borderRadius: BorderRadius.circular(10),
-          backgroundColor: Color(0xFFAFCBBF),
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
-        ),
-      );
-    }
+    Future.delayed(Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final stats = _characterStats[_currentCharacter]!;
-    final growth = stats['growth']!;
-    final totalGrowth = stats['totalGrowth']!;
-    final currentStage = stats['stage']!;
-    final requiredGrowth = _growthRequirements[currentStage] ?? 1;
-    final growthPercentage = (growth / requiredGrowth) * 100;
-
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: PRIMARY_COLOR,
         title: Text('03. 28. THU'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -276,92 +270,85 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   ),
                   SizedBox(
                     width: 200,
-                    child: _buildLinearProgressIndicator(currentStage, growth, requiredGrowth, totalGrowth),
+                    child: _buildLinearProgressIndicator(),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    currentStage < 3 ?  '${growthPercentage.toStringAsFixed(2)}%' : '성장도: $totalGrowth',
+                    _characterStats[_currentCharacter] != null && _growthRequirements[_characterStats[_currentCharacter]!['stage']] != null && _characterStats[_currentCharacter]!['stage']! < 3
+                        ? '성장률: ${(_characterStats[_currentCharacter]!['growth']! / _growthRequirements[_characterStats[_currentCharacter]!['stage']!]! * 100).toStringAsFixed(2)}%'
+                        : '총 성장도: ${_characterStats[_currentCharacter]!['totalGrowth']}',
                     style: TextStyle(fontSize: 12),
                   ),
                 ],
               ),
             ),
           ),
-          Flexible(
-            flex: 1,
+          Container(
+            color: _showCharacterSelection || _showCharacterStats ? Colors.white : Colors.transparent,
+            child: Column(
+              children: [
+                if (_showCharacterSelection || _showCharacterStats)
+                  SizedBox(height: 30), //a지점
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Builder(
+                      builder: (context) => _buildCircleButton('assets/images/love.png', () => _showHeartAnimation(context)),
+                    ),
+                    _buildCircleButton('assets/images/chara.png', _toggleCharacterSelection),
+                    _buildCircleButton('assets/images/plus.png', _toggleCharacterStats),
+                    _buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
+                  ],
+                ),
+                if (!(_showCharacterSelection || _showCharacterStats))
+                  SizedBox(height: 30), //b지점
+              ],
+            ),
+          ),
+          _showCharacterSelection || _showCharacterStats
+              ? Flexible(
             child: FractionallySizedBox(
-              heightFactor: 1.0,
+              heightFactor: 1,
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildCircleButton('assets/images/love.png'),
-                        _buildCircleButton('assets/images/chara.png'),
-                        _buildCircleButton('assets/images/plus.png'),
-                        _buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Divider(
-                      height: 30,
-                      thickness: 2,
-                      color: Color(0xFFB4B4B4),
-                    ),
-                    Expanded(
-                      child: _isCharacterSelection
-                          ? SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildCharacterSection('카돌', '카돌'),
-                            Divider(
-                              height: 30,
-                              thickness: 2,
-                              color: Color(0xFFB4B4B4),
-                            ),
-                            _buildCharacterSection('곰돌', '곰돌'),
-                            Divider(
-                              height: 30,
-                              thickness: 2,
-                              color: Color(0xFFB4B4B4),
-                            ),
-                            _buildCharacterSection('냥돌', '냥돌'),
-                          ],
+                    if (_showCharacterSelection)
+                      Expanded(
+                        child: CharacterSelectionScreen(onCharacterSelected: _updateCharacterImage, characterStats: _characterStats), // 캐릭터 선택창에 상태 전달
+                      ),
+                    if (_showCharacterStats)
+                      Expanded(
+                        child: CharacterStatsScreen(
+                          characterStats: _characterStats,
+                          currentCharacter: _currentCharacter,
                         ),
-                      )
-                          : _buildCharacterStats(),
-                    ),
+                      ),
                   ],
                 ),
               ),
             ),
-          ),
+          )
+              : SizedBox.shrink(),
         ],
       ),
     );
   }
 
-
   Widget _buildCircleButton(String imagePath, [VoidCallback? onTap]) {
+    final bool isSelected = (_showCharacterSelection && imagePath.contains('chara')) ||
+        (_showCharacterStats && imagePath.contains('plus'));
+
     return InkWell(
-      onTap: onTap ?? () {
-        if (imagePath == 'assets/images/plus.png') {
-          _showCharacterStats();
-        } else if (imagePath == 'assets/images/chara.png') {
-          _showCharacterSelection();
-        }
-      },
+      onTap: onTap,
       borderRadius: BorderRadius.circular(50),
       child: Container(
         width: 70,
         height: 70,
         decoration: BoxDecoration(
-          color: Color(0xFFD5E7E0),
+          color: isSelected ? Color(0xFFAED8CE) : (_showCharacterSelection || _showCharacterStats) ? Color(0xFFD5E7E0) : Color(0xFFAFCBBF),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -375,134 +362,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
     );
   }
 
-  Widget _buildCharacterSection(String characterName, String imagePrefix) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          characterName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildImageButton('assets/images/${imagePrefix}알.png', '알', characterName, 0),
-            _buildImageButton('assets/images/${imagePrefix}아기.png', '아기', characterName, 1),
-            _buildImageButton('assets/images/${imagePrefix}어린이.png', '어린이', characterName, 2),
-            _buildImageButton('assets/images/${imagePrefix}.png', '어른', characterName, 3),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImageButton(String imagePath, String label, String characterName, int stage) {
-    bool isSelected = _selectedButton == imagePath;
-    bool isUnlocked = _characterStats[characterName]!['stage']! >= stage;
-
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            if (isUnlocked) {
-              _updateCharacterImage(characterName, imagePath);
-            }
-          },
-          borderRadius: BorderRadius.circular(50),
-          child: Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              color: isSelected ? Color(0xFFA2D2C7) : Color(0xFFD9D9D9),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isUnlocked ? Colors.transparent : Colors.grey,
-                width: isUnlocked ? 0 : 2,
-              ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Opacity(
-                  opacity: isUnlocked ? 1.0 : 0.5,
-                  child: Image.asset(
-                    imagePath,
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-                if (isSelected && isUnlocked)
-                  Icon(
-                    Icons.check,
-                    color: Colors.black,
-                    size: 30,
-                  ),
-                if (!isUnlocked)
-                  Icon(
-                    Icons.lock,
-                    color: Colors.black54,
-                    size: 30,
-                  ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(label),
-      ],
-    );
-  }
-
-  Widget _buildCharacterStats() {
+  Widget _buildLinearProgressIndicator() {
     final stats = _characterStats[_currentCharacter]!;
     final growth = stats['growth']!;
     final totalGrowth = stats['totalGrowth']!;
-    final intimacy = stats['intimacy']!;
     final currentStage = stats['stage']!;
     final requiredGrowth = _growthRequirements[currentStage] ?? 1;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '캐릭터 이름 | $_currentCharacter',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          currentStage < 3 ? '성장도 | $growth / $requiredGrowth XP (${_stageSuffix(currentStage)})' : '총 성장도 | $totalGrowth',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(
-          width: 250,
-          child: LinearProgressIndicator(
-            value: currentStage < 3 ? growth / requiredGrowth : totalGrowth / (totalGrowth + 1),
-            minHeight: 7,
-            borderRadius: BorderRadius.circular(10),
-            backgroundColor: Color(0xFFAFCBBF),
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          '친밀도 | $intimacy / 100 (100%)',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-      ],
+    return SizedBox(
+      width: 200,
+      child: LinearProgressIndicator(
+        value: currentStage < 3 ? growth / requiredGrowth : totalGrowth / (totalGrowth + 1),
+        minHeight: 7,
+        borderRadius: BorderRadius.circular(10),
+        backgroundColor: Color(0xFFAFCBBF),
+        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
+      ),
     );
   }
 }
@@ -524,5 +398,244 @@ class TrianglePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+class CharacterSelectionScreen extends StatelessWidget {
+  final Function(String, String) onCharacterSelected;
+  final Map<String, Map<String, int>> characterStats; // 캐릭터 상태 전달
+
+  CharacterSelectionScreen({required this.onCharacterSelected, required this.characterStats});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Divider(
+            height: 30,
+            thickness: 2,
+            color: Color(0xFFB4B4B4),
+          ),
+          _buildCharacterSection(context, '카돌', '카돌'),
+          Divider(
+            height: 30,
+            thickness: 2,
+            color: Color(0xFFB4B4B4),
+          ),
+          _buildCharacterSection(context, '곰돌', '곰돌'),
+          Divider(
+            height: 30,
+            thickness: 2,
+            color: Color(0xFFB4B4B4),
+          ),
+          _buildCharacterSection(context, '냥돌', '냥돌'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCharacterSection(BuildContext context, String characterName, String imagePrefix) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          characterName,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        //SizedBox(height: 100),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildImageButton(context, 'assets/images/${imagePrefix}알.png', '알', characterName, 0),
+            _buildImageButton(context, 'assets/images/${imagePrefix}아기.png', '아기', characterName, 1),
+            _buildImageButton(context, 'assets/images/${imagePrefix}어린이.png', '어린이', characterName, 2),
+            _buildImageButton(context, 'assets/images/${imagePrefix}.png', '어른', characterName, 3),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageButton(BuildContext context, String imagePath, String label, String characterName, int stage) {
+    final int currentStage = characterStats[characterName]!['stage']!;
+    final bool isUnlocked = currentStage >= stage;
+
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            if (isUnlocked) {
+              onCharacterSelected(characterName, imagePath);
+            }
+          },
+          borderRadius: BorderRadius.circular(50),
+          child: Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: Color(0xFFD9D9D9),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isUnlocked ? Colors.transparent : Colors.grey,
+                width: isUnlocked ? 0 : 2,
+              ),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Opacity(
+                  opacity: isUnlocked ? 1.0 : 0.5,
+                  child: Image.asset(
+                    imagePath,
+                    width: 40,
+                    height: 40,
+                  ),
+                ),
+                if (!isUnlocked)
+                  Icon(
+                    Icons.lock,
+                    color: Colors.black54,
+                    size: 30,
+                  ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(label),
+      ],
+    );
+  }
+}
+
+class CharacterStatsScreen extends StatelessWidget {
+  final Map<String, Map<String, int>> characterStats;
+  final String currentCharacter;
+
+  CharacterStatsScreen({required this.characterStats, required this.currentCharacter});
+
+  final Map<int, int> _growthRequirements = {
+    0: 3600,
+    1: 7200,
+    2: 10800,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final stats = characterStats[currentCharacter]!;
+    final growth = stats['growth']!;
+    final totalGrowth = stats['totalGrowth']!;
+    final intimacy = stats['intimacy']!;
+    final currentStage = stats['stage']!;
+    final requiredGrowth = _growthRequirements[currentStage] ?? 1;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Divider(
+              height: 30,
+              thickness: 2,
+              color: Color(0xFFB4B4B4),
+            ),
+            Text(
+              '캐릭터 이름 | $currentCharacter',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              currentStage < 3 ? '성장도 | $growth / $requiredGrowth XP (${_stageSuffix(currentStage)})' : '총 성장도 | $totalGrowth',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            SizedBox(
+              width: 200,
+              child: LinearProgressIndicator(
+                value: currentStage < 3 ? growth / requiredGrowth : totalGrowth / (totalGrowth + 1),
+                minHeight: 7,
+                borderRadius: BorderRadius.circular(10),
+                backgroundColor: Color(0xFFAFCBBF),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5B9A90)),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '친밀도 | $intimacy / 100 ($intimacy%)',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HeartAnimation extends StatefulWidget {
+  @override
+  _HeartAnimationState createState() => _HeartAnimationState();
+}
+
+class _HeartAnimationState extends State<HeartAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0, end: -150).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _animation.value),
+          child: child,
+        );
+      },
+      child: Icon(
+        Icons.favorite,
+        color: Colors.red,
+        size: 50,
+      ),
+    );
+  }
 }
