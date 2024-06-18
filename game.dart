@@ -143,9 +143,9 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
-    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
-    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
+    '카돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
+    '곰돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
+    '냥돌': {'growth': 0, 'intimacy': 50, 'stage': 0, 'totalGrowth': -23000},
   };
 
   final Map<int, int> _growthRequirements = {
