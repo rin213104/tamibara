@@ -308,7 +308,7 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                     ),
                     _buildCircleButton('assets/images/chara.png', _toggleCharacterSelection),
                     _buildCircleButton('assets/images/plus.png', _toggleCharacterStats),
-                    //_buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
+                    _buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
                   ],
                 ),
                 if (!(_showCharacterSelection || _showCharacterStats))
