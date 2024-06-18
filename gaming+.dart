@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math';
-
-import 'package:untitled1/const/colors.dart'; // Ensure this import is correct and the file exists
+import '../const/colors.dart'; // Ensure this import is correct and the file exists
+import '../database/local_exp.dart';
+import '../action/gaming_data_model.dart';
+import 'package:intl/intl.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GamingDataModel(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -211,10 +219,20 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final formattedDate = DateFormat('MM. dd. EEE').format(DateTime.now());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PRIMARY_COLOR,
-        title: Text('03. 28. THU'),
+        title: Text(
+          formattedDate,
+          style: TextStyle(
+            fontSize: 22,
+            color: Color(0xFF4D6058),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
