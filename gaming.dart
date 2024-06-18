@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math';
-
-import 'package:untitled1/const/colors.dart'; // Ensure this import is correct and the file exists
+import '../const/colors.dart'; // Ensure this import is correct and the file exists
+import '../database/local_exp.dart';
+import '../action/gaming_data_model.dart';
+import 'package:intl/intl.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GamingDataModel(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +32,20 @@ class MyApp extends StatelessWidget {
       ),
       home: CharacterScreen(),
     );
+  }
+}
+
+String _stageSuffix(int stage) {
+  switch (stage) {
+    case 0:
+      return '알';
+    case 1:
+      return '아기';
+    case 2:
+      return '어린이';
+    case 3:
+    default:
+      return '';
   }
 }
 
@@ -90,9 +112,9 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
   };
 
   final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
-    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
-    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': 0},
+    '카돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
+    '곰돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
+    '냥돌': {'growth': 0, 'intimacy': 0, 'stage': 0, 'totalGrowth': -23000},
   };
 
   final Map<int, int> _growthRequirements = {
@@ -100,6 +122,39 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
     1: 7200,
     2: 10800,
   };
+
+  void _increaseGrowth() {
+    setState(() {
+      final stats = _characterStats[_currentCharacter]!;
+      final currentStage = stats['stage']!;
+      final currentGrowth = stats['growth']!;
+      final totalGrowth = stats['totalGrowth']!;
+
+      stats['totalGrowth'] = totalGrowth + 1000;
+
+      if (currentStage < 3) {
+        final requiredGrowth = _growthRequirements[currentStage]!;
+        if (currentGrowth + 1000 >= requiredGrowth) {
+          stats['growth'] = 0;
+          stats['stage'] = currentStage + 1;
+
+          String newImagePath;
+          if (_currentCharacter == '카돌') {
+            newImagePath = 'assets/images/카돌${_stageSuffix(currentStage + 1)}.png';
+          } else if (_currentCharacter == '곰돌') {
+            newImagePath = 'assets/images/곰돌${_stageSuffix(currentStage + 1)}.png';
+          } else {
+            newImagePath = 'assets/images/냥돌${_stageSuffix(currentStage + 1)}.png';
+          }
+          _updateCharacterImage(_currentCharacter, newImagePath);
+        } else {
+          stats['growth'] = currentGrowth + 1000;
+        }
+      } else {
+        stats['growth'] = currentGrowth + 1000;
+      }
+    });
+  }
 
   void _updateCharacterImage(String character, String newImagePath) {
     setState(() {
@@ -145,6 +200,8 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
     final RenderBox buttonRenderBox = context.findRenderObject() as RenderBox;
     final buttonPosition = buttonRenderBox.localToGlobal(Offset.zero);
     final overlay = Overlay.of(context);
+    final stats = _characterStats[_currentCharacter];
+    final totalGrowth = stats != null ? stats['totalGrowth']! : 0;
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: buttonPosition.dy - 50,
@@ -162,10 +219,20 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final formattedDate = DateFormat('MM. dd. EEE').format(DateTime.now());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: PRIMARY_COLOR,
-        title: Text('03. 28. THU'),
+        title: Text(
+          formattedDate,
+          style: TextStyle(
+            fontSize: 22,
+            color: Color(0xFF4D6058),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -222,14 +289,13 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                   SizedBox(
                     width: 200,
                     child: _buildLinearProgressIndicator(),
-
                   ),
                   SizedBox(height: 10),
-
                   Text(
-                    '${(_characterStats[_currentCharacter]!['growth']! / _growthRequirements[_characterStats[_currentCharacter]!['stage']!]! * 100).toStringAsFixed(2)}%',
+                    _characterStats[_currentCharacter] != null && _growthRequirements[_characterStats[_currentCharacter]!['stage']] != null && _characterStats[_currentCharacter]!['stage']! < 3
+                        ? '성장률: ${(_characterStats[_currentCharacter]!['growth']! / _growthRequirements[_characterStats[_currentCharacter]!['stage']!]! * 100).toStringAsFixed(2)}%'
+                        : '총 성장도: ${_characterStats[_currentCharacter]!['totalGrowth']}',
                     style: TextStyle(fontSize: 12),
-
                   ),
                 ],
               ),
@@ -249,12 +315,11 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                     ),
                     _buildCircleButton('assets/images/chara.png', _toggleCharacterSelection),
                     _buildCircleButton('assets/images/plus.png', _toggleCharacterStats),
-
+                    //_buildCircleButton('assets/images/increase.png', _increaseGrowth), //성장도 오르는 버튼
                   ],
-
                 ),
                 if (!(_showCharacterSelection || _showCharacterStats))
-                  SizedBox(height: 30),//b지점
+                  SizedBox(height: 30), //b지점
               ],
             ),
           ),
@@ -270,7 +335,7 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                   children: [
                     if (_showCharacterSelection)
                       Expanded(
-                        child: CharacterSelectionScreen(onCharacterSelected: _updateCharacterImage),
+                        child: CharacterSelectionScreen(onCharacterSelected: _updateCharacterImage, characterStats: _characterStats), // 캐릭터 선택창에 상태 전달
                       ),
                     if (_showCharacterStats)
                       Expanded(
@@ -358,14 +423,9 @@ class TrianglePainter extends CustomPainter {
 
 class CharacterSelectionScreen extends StatelessWidget {
   final Function(String, String) onCharacterSelected;
+  final Map<String, Map<String, int>> characterStats; // 캐릭터 상태 전달
 
-  CharacterSelectionScreen({required this.onCharacterSelected});
-
-  final Map<String, Map<String, int>> _characterStats = {
-    '카돌': {'stage': 0},
-    '곰돌': {'stage': 0},
-    '냥돌': {'stage': 0},
-  };
+  CharacterSelectionScreen({required this.onCharacterSelected, required this.characterStats});
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +482,8 @@ class CharacterSelectionScreen extends StatelessWidget {
   }
 
   Widget _buildImageButton(BuildContext context, String imagePath, String label, String characterName, int stage) {
-    final bool isUnlocked = _characterStats[characterName]!['stage']! >= stage;
+    final int currentStage = characterStats[characterName]!['stage']!;
+    final bool isUnlocked = currentStage >= stage;
 
     return Column(
       children: [
@@ -484,20 +545,6 @@ class CharacterStatsScreen extends StatelessWidget {
     2: 10800,
   };
 
-  String _stageSuffix(int stage) {
-    switch (stage) {
-      case 0:
-        return '알';
-      case 1:
-        return '아기';
-      case 2:
-        return '어린이';
-      case 3:
-      default:
-        return '';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final stats = characterStats[currentCharacter]!;
@@ -546,7 +593,7 @@ class CharacterStatsScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              '친밀도 | $intimacy / 100 (100%)',
+              '친밀도 | $intimacy / 100 ($intimacy%)',
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 14,
