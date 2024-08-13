@@ -16,7 +16,7 @@
 - 김연희, Github Id: Salmon16YH
 - 박하선, Github Id: excqpd
 - 은준호, Github Id: euuun0
-- 지수, Github Id: jsy
+- 지수연, Github Id: jsy
 
 ## ⚙️ 개발환경&기술스택
 - Android Studio
