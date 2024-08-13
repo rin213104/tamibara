@@ -42,6 +42,7 @@
 * 캐릭터 디자인<br>
 주요 캐릭터는 세 가지 타입으로 디자인, 메인 캐릭터는 카피바라라는 동물을 모티브로 디자인한 캐릭터로 세팅<br>
 모든 캐릭터는 알 → 유아기 → 청소년기 → 성년기 순으로 성장<br>
+
 |알|유아기|청소년기|성년|
 |------|---|---|------|
 |![image](https://github.com/user-attachments/assets/b0654faa-5163-4983-a101-8fc90582a320)
@@ -49,6 +50,7 @@
 |![image](https://github.com/user-attachments/assets/a4990513-9545-4963-b429-a79d9dc81616)
 |![image](https://github.com/user-attachments/assets/aea4cebe-34b2-4fac-a2fc-80cc647d3d9c)
 |
+
 3) 
 
 #### 5. 프로필 및 설정 화면
