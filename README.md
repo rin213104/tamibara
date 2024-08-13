@@ -44,16 +44,11 @@
 모든 캐릭터는 알 → 유아기 → 청소년기 → 성년기 순으로 성장<br>
 
 |알|유아기|청소년기|성년|
-|------|
-|![image](https://github.com/user-attachments/assets/b0654faa-5163-4983-a101-8fc90582a320)
-|![image](https://github.com/user-attachments/assets/fd759026-47b8-4592-a100-2099271310ff)
-|![image](https://github.com/user-attachments/assets/a4990513-9545-4963-b429-a79d9dc81616)
-|![image](https://github.com/user-attachments/assets/aea4cebe-34b2-4fac-a2fc-80cc647d3d9c)
-|
-
-3) 
+|------|---|---|------|
+|![image](https://github.com/user-attachments/assets/b0654faa-5163-4983-a101-8fc90582a320)|![image](https://github.com/user-attachments/assets/fd759026-47b8-4592-a100-2099271310ff)|![image](https://github.com/user-attachments/assets/a4990513-9545-4963-b429-a79d9dc81616)|![image](https://github.com/user-attachments/assets/aea4cebe-34b2-4fac-a2fc-80cc647d3d9c)|
 
 #### 5. 프로필 및 설정 화면
 - 사용자 프로필 정보를 관리
 
+#### 프로젝트 결과
 
