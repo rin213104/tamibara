@@ -44,7 +44,7 @@
 모든 캐릭터는 알 → 유아기 → 청소년기 → 성년기 순으로 성장<br>
 
 |알|유아기|청소년기|성년|
-|------|---|---|------|
+|------|
 |![image](https://github.com/user-attachments/assets/b0654faa-5163-4983-a101-8fc90582a320)
 |![image](https://github.com/user-attachments/assets/fd759026-47b8-4592-a100-2099271310ff)
 |![image](https://github.com/user-attachments/assets/a4990513-9545-4963-b429-a79d9dc81616)
