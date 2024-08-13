@@ -68,3 +68,6 @@
 |------|---|---|------|
 |![image](https://github.com/user-attachments/assets/2dd46451-a247-40f6-9cf6-044e1bd7a5b2)|![image](https://github.com/user-attachments/assets/8c7419db-be98-40bb-95fb-0ed69da670de)|![image](https://github.com/user-attachments/assets/76d4de1d-b876-4877-801a-28557bb15850)|![image](https://github.com/user-attachments/assets/8fb41328-e229-4976-953e-11203fb15368)|
 
+### 프로젝트 실행 영상
+https://github.com/user-attachments/assets/f5987def-6524-41b2-b387-7b281e85ad30
+
