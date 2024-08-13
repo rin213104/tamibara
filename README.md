@@ -63,6 +63,7 @@
 
 #### 5. 프로필 및 설정 화면
 - 사용자 프로필 정보를 관리<br>
+
 |설정 화면|프로필 설정|닉네임 변경|친구 추가|
 |------|---|---|------|
 |![image](https://github.com/user-attachments/assets/2dd46451-a247-40f6-9cf6-044e1bd7a5b2)|![image](https://github.com/user-attachments/assets/8c7419db-be98-40bb-95fb-0ed69da670de)|![image](https://github.com/user-attachments/assets/76d4de1d-b876-4877-801a-28557bb15850)|![image](https://github.com/user-attachments/assets/8fb41328-e229-4976-953e-11203fb15368)|
