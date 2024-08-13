@@ -32,8 +32,7 @@
 사용자가 어플리케이션 시작 시 캐릭터를 선택하고 관리할 수 있도록 초기 화면을 제공<br>
 |접속 초기 이미지|캐릭터 선택|캐릭터 상세설명|환영 메세지|
 |------|---|---|------|
-|![image](https://github.com/user-attachments/assets/3ffd12a2-cff0-46a2-8d82-e807ba1649ad)|![image](https://github.com/user-attachments/assets/04b8d8cc-31b4-447e-af9c-2fffb72990d1)|![image](https://github.com/user-attachments/assets/ac6fb931-26a9-4757-8f75-39193403f00e)
-|![image](https://github.com/user-attachments/assets/c289233e-ed84-4822-a2b0-c90461402779)|
+|![image](https://github.com/user-attachments/assets/3ffd12a2-cff0-46a2-8d82-e807ba1649ad)|![image](https://github.com/user-attachments/assets/04b8d8cc-31b4-447e-af9c-2fffb72990d1)|![image](https://github.com/user-attachments/assets/ac6fb931-26a9-4757-8f75-39193403f00e)|![image](https://github.com/user-attachments/assets/c289233e-ed84-4822-a2b0-c90461402779)|
   
 #### 2. 목표 리스트 화면
 사용자가 설정한 목표를 리스트 형태로 보여주고 관리<br>
@@ -66,6 +65,5 @@
 - 사용자 프로필 정보를 관리<br>
 |설정 화면|프로필 설정|닉네임 변경|친구 추가|
 |------|---|---|------|
-|![image](https://github.com/user-attachments/assets/2dd46451-a247-40f6-9cf6-044e1bd7a5b2)|![image](https://github.com/user-attachments/assets/8c7419db-be98-40bb-95fb-0ed69da670de)|![image](https://github.com/user-attachments/assets/76d4de1d-b876-4877-801a-28557bb15850)
-|![image](https://github.com/user-attachments/assets/8fb41328-e229-4976-953e-11203fb15368)|
+|![image](https://github.com/user-attachments/assets/2dd46451-a247-40f6-9cf6-044e1bd7a5b2)|![image](https://github.com/user-attachments/assets/8c7419db-be98-40bb-95fb-0ed69da670de)|![image](https://github.com/user-attachments/assets/76d4de1d-b876-4877-801a-28557bb15850)|![image](https://github.com/user-attachments/assets/8fb41328-e229-4976-953e-11203fb15368)|
 
