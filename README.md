@@ -14,7 +14,7 @@
 ## 🧑‍🤝‍🧑 멤버구성
 - 강혜린, Github Id: rin213104
 - 김연희, Github Id: Salmon16YH
-- 박하선, Github Id: excqpd
+- 박하선, Github Id: excqod
 - 은준호, Github Id: euuun0
 - 지수연, Github Id: jsy
 
